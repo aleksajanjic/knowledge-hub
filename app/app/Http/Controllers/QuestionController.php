@@ -4,47 +4,26 @@ namespace App\Http\Controllers;
 
 use App\Models\Question;
 use App\Models\Tag;
+use App\Services\QuestionFilter;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Contracts\View\View;
 
 class QuestionController extends Controller
 {
-    /**
-     * Display a listing of questions.
-     *
-     * @return View
-     */
     public function index(Request $request): View
     {
-        $perPage = 5;
-        $query = Question::with(['user', 'tags', 'votes']);
+        $questionFilter = new QuestionFilter($request);
+        $questions = $questionFilter->apply()->paginate(10);
 
-        if ($request->has('search') && $request->search != '') {
-            $searchTerm = $request->search;
-            $query->where(function ($q) use ($searchTerm) {
-                $q->where('title', 'like', '%' . $searchTerm . '%')
-                    ->orWhere('content', 'like', '%' . $searchTerm . '%');
-            });
-        }
+        $allTags = Tag::withCount('questions')
+            ->orderBy('questions_count', 'desc')
+            ->take(20)
+            ->get();
 
-        if ($request->has('tag') && $request->tag != '') {
-            $query->whereHas('tags', function ($q) use ($request) {
-                $q->where('name', $request->tag);
-            });
-        }
-
-        $questions = $query->latest()->paginate($perPage);
-
-        return view('home', compact('questions'));
+        return view('home', compact('questions', 'allTags'));
     }
 
-    /**
-     * Store a newly created question in storage.
-     *
-     * @param Request $request
-     * @return RedirectResponse
-     */
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
@@ -59,21 +38,63 @@ class QuestionController extends Controller
             'user_id' => auth()->id(),
         ]);
 
-        // Handle tags
         if (!empty($validated['tags'])) {
-            $tagNames = array_map('trim', explode(',', $validated['tags']));
-            foreach ($tagNames as $tagName) {
-                $tag = Tag::firstOrCreate(['name' => $tagName]);
-                $question->tags()->attach($tag->id);
-            }
+            $this->attachTags($question, $validated['tags']);
         }
 
         return redirect()->route('home')->with('success', 'Question created successfully.');
     }
 
-    public function show(Question $question)
+    public function show(Question $question): View
     {
         $question->load(['user', 'tags', 'votes', 'answers.user', 'answers.votes']);
-        return view("components.questions.question-detail-content", compact('question'));
+
+        return view('components.questions.question-detail-content', compact('question'));
+    }
+
+    public function edit(Question $question)
+    {
+        $question->load('tags');
+
+        return view('components.questions.question-edit-modal', compact('question'));
+    }
+
+    public function update(Request $request, Question $question): RedirectResponse
+    {
+        $validated = $request->validate([
+            'title' => "required|string|max:255",
+            'content' => "required|string",
+            "tags" => "nullable|string"
+        ]);
+
+        $question->update([
+            "title" => $validated['title'],
+            "content" => $validated['content'],
+        ]);
+
+        $question->tags()->detach();
+
+        if (!empty($validated['tags'])) {
+            $this->attachTags($question, $validated['tags']);
+        }
+
+        return redirect()->route('home')->with("success", 'Question updated successfull.');
+    }
+
+    public function destroy(Question $question): RedirectResponse
+    {
+        $question->delete();
+
+        return redirect()->route('home')->with('success', 'Question deleted successfully.');
+    }
+
+    private function attachTags(Question $question, string $tags): void
+    {
+        $tagNames = array_map('trim', explode(',', $tags));
+
+        foreach ($tagNames as $tagName) {
+            $tag = Tag::firstOrCreate(['name' => $tagName]);
+            $question->tags()->attach($tag->id);
+        }
     }
 }

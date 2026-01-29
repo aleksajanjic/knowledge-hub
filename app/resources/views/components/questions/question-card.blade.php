@@ -7,30 +7,74 @@
 @endphp
 
 <div onclick="openQuestionModal({{ $question->id }})"
-    style="background: rgba(24, 24, 27, 0.5); border: 1px solid #27272A; border-radius: 12px; padding: 20px; margin-bottom: 16px; cursor: pointer; transition: all 0.2s;">
-    <div style="display: flex; gap: 16px;">
+    style="background: rgba(24,24,27,.5); border:1px solid #27272A; border-radius:12px; padding:20px; margin-bottom:16px; cursor:pointer; transition:.2s; position:relative;">
+
+    <!-- Three-dot menu -->
+    <div style="position:absolute; top:12px; right:12px;" onclick="event.stopPropagation()">
+        <div style="position: relative; display: inline-block;">
+            <button onclick="toggleDropdown({{ $question->id }})"
+                class="p-2 rounded text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800 transition-colors"
+                style="background: none; border: none; cursor: pointer;">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="white" viewBox="0 0 20 20">
+                    <path
+                        d="M10 3a1.5 1.5 0 110 3 1.5 1.5 0 010-3zm0 5a1.5 1.5 0 110 3 1.5 1.5 0 010-3zm0 5a1.5 1.5 0 110 3 1.5 1.5 0 010-3z" />
+                </svg>
+            </button>
+
+            <!-- Dropdown menu -->
+            <div id="dropdown-{{ $question->id }}"
+                style="display: none; position: absolute; right: 0; top: 100%; margin-top: 4px; background: #18181B; border: 1px solid #3F3F46; border-radius: 8px; min-width: 150px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); z-index: 50;">
+                <a href="#" onclick="event.preventDefault(); openEditModal({{ $question->id }})"
+                    onclick="event.stopPropagation()"
+                    style="display: block; padding: 10px 16px; color: #FAFAFA; text-decoration: none; font-size: 14px; transition: background 0.2s;"
+                    onmouseover="this.style.background='#27272A'" onmouseout="this.style.background='transparent'">
+                    <svg style="width: 14px; height: 14px; display: inline-block; margin-right: 8px;" fill="none"
+                        stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                    </svg>
+                    {{ __('Edit') }}
+                </a>
+
+                <form method="POST" action="{{ route('questions.destroy', $question) }}"
+                    onsubmit="return confirm('{{ __('Are you sure you want to delete this question?') }}')">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" onclick="event.stopPropagation()"
+                        style="width: 100%; text-align: left; padding: 10px 16px; background: none; border: none; color: #F43F5E; font-size: 14px; cursor: pointer; transition: background 0.2s;"
+                        onmouseover="this.style.background='#27272A'" onmouseout="this.style.background='transparent'">
+                        <svg style="width: 14px; height: 14px; display: inline-block; margin-right: 8px;" fill="none"
+                            stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                        {{ __('Delete') }}
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div style="display:flex; gap:16px;">
         <!-- Vote Section -->
-        <div style="display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 60px;">
-            <button onclick="event.stopPropagation(); vote({{ $question->id }}, 'upvote', this)"
-                data-question-id="{{ $question->id }}"
-                style="padding: 4px; color: {{ $hasUpvoted ? '#10B981' : '#71717A' }}; background: none; border: none; cursor: pointer; transition: color 0.2s;"
-                onmouseover="if(!this.style.color.includes('10B981')) this.style.color='#10B981'"
-                onmouseout="if(!{{ $hasUpvoted ? 'true' : 'false' }}) this.style.color='#71717A'">
-                <svg style="width: 20px; height: 20px;" fill="{{ $hasUpvoted ? 'currentColor' : 'none' }}"
+        <div style="display:flex; flex-direction:column; align-items:center; gap:4px; min-width:60px;"
+            onclick="event.stopPropagation()">
+            <button onclick="vote({{ $question->id }}, 'upvote', this)"
+                style="padding:4px; color:{{ $hasUpvoted ? '#10B981' : '#71717A' }}; background:none; border:none; cursor: pointer;">
+                <svg style="width:20px; height:20px;" fill="{{ $hasUpvoted ? 'currentColor' : 'none' }}"
                     stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
                 </svg>
             </button>
+
             <span id="vote-count-{{ $question->id }}"
-                style="font-size: 18px; font-weight: 600; color: {{ $question->votes > 0 ? '#10B981' : ($question->votes < 0 ? '#F43F5E' : '#E4E4E7') }};">
+                style="font-size:18px; font-weight:600; color:{{ $question->votes > 0 ? '#10B981' : ($question->votes < 0 ? '#F43F5E' : '#E4E4E7') }}">
                 {{ $question->votes }}
             </span>
-            <button onclick="event.stopPropagation(); vote({{ $question->id }}, 'downvote', this)"
-                data-question-id="{{ $question->id }}"
-                style="padding: 4px; color: {{ $hasDownvoted ? '#F43F5E' : '#71717A' }}; background: none; border: none; cursor: pointer; transition: color 0.2s;"
-                onmouseover="if(!this.style.color.includes('F43F5E')) this.style.color='#F43F5E'"
-                onmouseout="if(!{{ $hasDownvoted ? 'true' : 'false' }}) this.style.color='#71717A'">
-                <svg style="width: 20px; height: 20px;" fill="{{ $hasDownvoted ? 'currentColor' : 'none' }}"
+
+            <button onclick="vote({{ $question->id }}, 'downvote', this)"
+                style="padding:4px; color:{{ $hasDownvoted ? '#F43F5E' : '#71717A' }}; background:none; border:none; cursor: pointer;">
+                <svg style="width:20px; height:20px;" fill="{{ $hasDownvoted ? 'currentColor' : 'none' }}"
                     stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                 </svg>
@@ -38,24 +82,22 @@
         </div>
 
         <!-- Content -->
-        <div style="flex: 1;">
-            <h3 style="color: #FAFAFA; font-size: 18px; font-weight: 500; margin-bottom: 8px; transition: color 0.2s;"
-                onmouseover="this.style.color='#10B981'" onmouseout="this.style.color='#FAFAFA'">
+        <div style="flex:1;">
+            <h3 style="color:#FAFAFA; font-size:18px; font-weight:500; margin-bottom:8px;">
                 {{ $question->title }}
             </h3>
 
             <p
-                style="color: #71717A; font-size: 14px; margin-bottom: 12px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                style="color:#71717A; font-size:14px; margin-bottom:12px; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;">
                 {{ $question->content }}
             </p>
 
-            <!-- Tags -->
-            @if ($question->tags->count() > 0)
-                <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px;">
+            @if ($question->tags->count())
+                <div style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:12px;"
+                    onclick="event.stopPropagation()">
                     @foreach ($question->tags as $tag)
                         <a href="{{ route('questions.index', ['tag' => $tag->name]) }}"
-                            onclick="event.stopPropagation();"
-                            style="padding: 4px 10px; background: #27272A; color: #A1A1AA; font-size: 12px; border-radius: 6px; transition: all 0.2s; text-decoration: none; cursor: pointer;"
+                            style="padding:4px 10px; background:#27272A; color:#A1A1AA; font-size:12px; border-radius:6px; text-decoration:none; transition: all 0.2s;"
                             onmouseover="this.style.background='#3F3F46'; this.style.color='#D4D4D8'"
                             onmouseout="this.style.background='#27272A'; this.style.color='#A1A1AA'">
                             {{ $tag->name }}
@@ -64,13 +106,11 @@
                 </div>
             @endif
 
-            <!-- Meta Info -->
-            <div
-                style="display: flex; align-items: center; justify-content: space-between; font-size: 12px; color: #71717A;">
-                <div style="display: flex; align-items: center; gap: 16px;">
-                    <span style="display: flex; align-items: center; gap: 6px;">
+            <div style="display:flex; justify-content:space-between; font-size:12px; color:#71717A;">
+                <div style="display:flex; align-items:center; gap:16px;">
+                    <span style="display:flex; align-items:center; gap:6px;">
                         <div
-                            style="width: 24px; height: 24px; border-radius: 50%; background: #3F3F46; color: #A1A1AA; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 500;">
+                            style="width:24px; height:24px; border-radius:50%; background:#3F3F46; display:flex; align-items:center; justify-content:center; font-size:10px; color: #A1A1AA; font-weight: 500;">
                             {{ strtoupper(substr($question->user->name ?? 'U', 0, 1)) }}
                         </div>
                         {{ $question->user->name ?? 'Unknown' }}
@@ -84,32 +124,30 @@
                         {{ $question->created_at->diffForHumans() }}
                     </span>
                 </div>
-                <div style="display: flex; align-items: center; gap: 16px;">
-                    <span style="display: flex; align-items: center; gap: 4px;">
-                        <svg style="width: 12px; height: 12px;" fill="none" stroke="currentColor"
-                            viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                        </svg>
-                        0
-                    </span>
-                    <span style="display: flex; align-items: center; gap: 4px;">
-                        <svg style="width: 12px; height: 12px;" fill="none" stroke="currentColor"
-                            viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                        </svg>
-                        0
-                    </span>
-                </div>
             </div>
         </div>
     </div>
 </div>
 
 <script>
+    function toggleDropdown(questionId) {
+        const dropdown = document.getElementById(`dropdown-${questionId}`);
+        const isVisible = dropdown.style.display === 'block';
+
+        // Close all other dropdowns
+        document.querySelectorAll('[id^="dropdown-"]').forEach(d => d.style.display = 'none');
+
+        // Toggle current dropdown
+        dropdown.style.display = isVisible ? 'none' : 'block';
+    }
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(event) {
+        if (!event.target.closest('[id^="dropdown-"]') && !event.target.closest('button')) {
+            document.querySelectorAll('[id^="dropdown-"]').forEach(d => d.style.display = 'none');
+        }
+    });
+
     function vote(questionId, type, button) {
         fetch(`/questions/${questionId}/${type}`, {
                 method: 'POST',
@@ -118,44 +156,33 @@
                     'X-CSRF-TOKEN': '{{ csrf_token() }}'
                 }
             })
-            .then(response => response.json())
+            .then(r => r.json())
             .then(data => {
-                // Update vote count
-                const voteCount = document.getElementById(`vote-count-${questionId}`);
-                voteCount.textContent = data.votes;
+                const countEl = document.getElementById(`vote-count-${questionId}`)
+                countEl.textContent = data.votes
+                countEl.style.color = data.votes > 0 ? '#10B981' : data.votes < 0 ? '#F43F5E' : '#E4E4E7'
 
-                // Update color based on vote count
-                if (data.votes > 0) {
-                    voteCount.style.color = '#10B981';
-                } else if (data.votes < 0) {
-                    voteCount.style.color = '#F43F5E';
-                } else {
-                    voteCount.style.color = '#E4E4E7';
-                }
-
-                // Update button states
-                const upvoteBtn = button.parentElement.querySelector('button:first-child');
-                const downvoteBtn = button.parentElement.querySelector('button:last-child');
-                const upvoteSvg = upvoteBtn.querySelector('svg');
-                const downvoteSvg = downvoteBtn.querySelector('svg');
+                const wrap = button.parentElement
+                const up = wrap.children[0]
+                const down = wrap.children[2]
+                const upSvg = up.querySelector('svg')
+                const downSvg = down.querySelector('svg')
 
                 if (data.userVote === 1) {
-                    upvoteBtn.style.color = '#10B981';
-                    upvoteSvg.setAttribute('fill', 'currentColor');
-                    downvoteBtn.style.color = '#71717A';
-                    downvoteSvg.setAttribute('fill', 'none');
+                    up.style.color = '#10B981'
+                    upSvg.setAttribute('fill', 'currentColor')
+                    down.style.color = '#71717A'
+                    downSvg.setAttribute('fill', 'none')
                 } else if (data.userVote === -1) {
-                    downvoteBtn.style.color = '#F43F5E';
-                    downvoteSvg.setAttribute('fill', 'currentColor');
-                    upvoteBtn.style.color = '#71717A';
-                    upvoteSvg.setAttribute('fill', 'none');
+                    down.style.color = '#F43F5E'
+                    downSvg.setAttribute('fill', 'currentColor')
+                    up.style.color = '#71717A'
+                    upSvg.setAttribute('fill', 'none')
                 } else {
-                    upvoteBtn.style.color = '#71717A';
-                    upvoteSvg.setAttribute('fill', 'none');
-                    downvoteBtn.style.color = '#71717A';
-                    downvoteSvg.setAttribute('fill', 'none');
+                    up.style.color = down.style.color = '#71717A'
+                    upSvg.setAttribute('fill', 'none')
+                    downSvg.setAttribute('fill', 'none')
                 }
             })
-            .catch(error => console.error('Error:', error));
     }
 </script>

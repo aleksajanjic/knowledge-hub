@@ -33,6 +33,9 @@
             <!-- Search Bar Component -->
             <x-questions.search-bar />
 
+            <!-- Filter Component -->
+            <x-questions.filters :allTags="$allTags" />
+
             <!-- Results Message -->
             @if (request('search'))
                 <div

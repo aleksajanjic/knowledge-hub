@@ -1,10 +1,10 @@
 <?php
 
 use App\Http\Controllers\AnswerController;
-use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\VoteController;
+use App\Http\Controllers\Admin\AdminController;
 use Illuminate\Support\Facades\Route;
 
 // Home/Dashboard route
@@ -19,17 +19,27 @@ Route::middleware('auth')->group(function () {
 
 // Question routes
 Route::middleware(['auth'])->group(function () {
+    // Question
     Route::get('/questions', [QuestionController::class, 'index'])->name('questions.index');
     Route::post('/questions', [QuestionController::class, 'store'])->name('questions.store');
+    Route::get('/questions/{question}/edit', [QuestionController::class, 'edit'])->name('questions.edit');
+    Route::put('/questions/{question}', [QuestionController::class, 'update'])->name('questions.update');
+    Route::delete('/questions/{question}', [QuestionController::class, 'destroy'])->name('questions.destroy');
     Route::get('/questions/{question}/details', [QuestionController::class, 'show'])->name('questions.show');
 
+    // Vote
     Route::post('/questions/{question}/upvote', [VoteController::class, 'upvote'])->name('questions.upvote');
     Route::post('/questions/{question}/downvote', [VoteController::class, 'downvote'])->name('questions.downvote');
 
-    // Route::post('/answers/{answer}/upvote', [AnswerController::class, 'upvote'])->name('answers.upvote');
-    // Route::post('/answers/{answer}/downvote', [AnswerController::class, 'downvote'])->name('answers.downvote');
-
+    // Answer
+    Route::post('/answers/{answer}/upvote', [AnswerController::class, 'upvote'])->name('answers.upvote');
+    Route::post('/answers/{answer}/downvote', [AnswerController::class, 'downvote'])->name('answers.downvote');
     Route::post('/questions/{question}/answers', [AnswerController::class, 'store'])->name('answers.store');
+});
+
+// Admin routes
+Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/', [AdminController::class, 'index'])->name('dashboard');
 });
 
 require __DIR__ . '/auth.php';
