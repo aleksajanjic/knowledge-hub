@@ -11,7 +11,8 @@ class QuestionSeeder extends Seeder
 {
     public function run(): void
     {
-        $users = User::all();
+        // Ensure at least one user exists
+        $user = User::first() ?: User::factory()->create();
 
         $titles = [
             "How to fix CORS error in Laravel API?",
@@ -67,6 +68,71 @@ class QuestionSeeder extends Seeder
             "What are best practices for handling errors in a Node.js/Express application?",
         ];
 
+        // All unique tag names
+        $tagNames = [
+            "laravel",
+            "redis",
+            "api",
+            "cors",
+            "react",
+            "state-management",
+            "redux",
+            "docker",
+            "containers",
+            "debugging",
+            "mysql",
+            "optimization",
+            "performance",
+            "javascript",
+            "fundamentals",
+            "nextjs",
+            "authentication",
+            "jwt",
+            "python",
+            "async",
+            "concurrency",
+            "deployment",
+            "production",
+            "closures",
+            "vuejs",
+            "architecture",
+            "best-practices",
+            "npm",
+            "dependencies",
+            "troubleshooting",
+            "postgresql",
+            "database",
+            "security",
+            "web-development",
+            "performance",
+            "optimization",
+            "service-providers",
+            "caching",
+            "git",
+            "version-control",
+            "file-upload",
+            "validation",
+            "design-patterns",
+            "dependency-injection",
+            "testing",
+            "automation",
+            "rest",
+            "graphql",
+            "api-design",
+            "nodejs",
+            "error-handling",
+            "express",
+            "networking"
+        ];
+
+        // Preload tags into name => id mapping
+        $tags = [];
+        foreach ($tagNames as $name) {
+            $tagModel = Tag::firstOrCreate(['name' => $name]);
+            $tags[$name] = $tagModel->id;
+        }
+
+        // Question-to-tags mapping
         $tagsList = [
             ["laravel", "api", "cors"],
             ["react", "state-management", "redux"],
@@ -94,17 +160,16 @@ class QuestionSeeder extends Seeder
             ["nodejs", "error-handling", "express"],
         ];
 
-        for ($i = 0; $i < 24; $i++) {
+        // Create questions and attach tags by preloaded IDs
+        for ($i = 0; $i < count($titles); $i++) {
             $question = Question::create([
                 'title' => $titles[$i],
                 'content' => $contents[$i],
-                'user_id' => $users->random()->id,
+                'user_id' => $user->id,
             ]);
 
-            // Attach tags
             foreach ($tagsList[$i] as $tagName) {
-                $tag = Tag::firstOrCreate(['name' => $tagName]);
-                $question->tags()->attach($tag->id);
+                $question->tags()->attach($tags[$tagName]);
             }
         }
     }

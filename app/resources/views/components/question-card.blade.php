@@ -1,22 +1,37 @@
 @props(['question'])
 
+@php
+    $userVote = auth()->check() ? $question->userVote(auth()->id()) : null;
+    $hasUpvoted = $userVote && $userVote->vote == 1;
+    $hasDownvoted = $userVote && $userVote->vote == -1;
+@endphp
+
 <div
     style="background: rgba(24, 24, 27, 0.5); border: 1px solid #27272A; border-radius: 12px; padding: 20px; margin-bottom: 16px; cursor: pointer; transition: all 0.2s;">
     <div style="display: flex; gap: 16px;">
         <!-- Vote Section -->
         <div style="display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 60px;">
-            <button
-                style="padding: 4px; color: #71717A; background: none; border: none; cursor: pointer; transition: color 0.2s;"
-                onmouseover="this.style.color='#10B981'" onmouseout="this.style.color='#71717A'">
-                <svg style="width: 20px; height: 20px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <button onclick="event.stopPropagation(); vote({{ $question->id }}, 'upvote', this)"
+                data-question-id="{{ $question->id }}"
+                style="padding: 4px; color: {{ $hasUpvoted ? '#10B981' : '#71717A' }}; background: none; border: none; cursor: pointer; transition: color 0.2s;"
+                onmouseover="if(!this.style.color.includes('10B981')) this.style.color='#10B981'"
+                onmouseout="if(!{{ $hasUpvoted ? 'true' : 'false' }}) this.style.color='#71717A'">
+                <svg style="width: 20px; height: 20px;" fill="{{ $hasUpvoted ? 'currentColor' : 'none' }}"
+                    stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
                 </svg>
             </button>
-            <span style="font-size: 18px; font-weight: 600; color: #E4E4E7;">0</span>
-            <button
-                style="padding: 4px; color: #71717A; background: none; border: none; cursor: pointer; transition: color 0.2s;"
-                onmouseover="this.style.color='#F43F5E'" onmouseout="this.style.color='#71717A'">
-                <svg style="width: 20px; height: 20px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <span id="vote-count-{{ $question->id }}"
+                style="font-size: 18px; font-weight: 600; color: {{ $question->votes > 0 ? '#10B981' : ($question->votes < 0 ? '#F43F5E' : '#E4E4E7') }};">
+                {{ $question->votes }}
+            </span>
+            <button onclick="event.stopPropagation(); vote({{ $question->id }}, 'downvote', this)"
+                data-question-id="{{ $question->id }}"
+                style="padding: 4px; color: {{ $hasDownvoted ? '#F43F5E' : '#71717A' }}; background: none; border: none; cursor: pointer; transition: color 0.2s;"
+                onmouseover="if(!this.style.color.includes('F43F5E')) this.style.color='#F43F5E'"
+                onmouseout="if(!{{ $hasDownvoted ? 'true' : 'false' }}) this.style.color='#71717A'">
+                <svg style="width: 20px; height: 20px;" fill="{{ $hasDownvoted ? 'currentColor' : 'none' }}"
+                    stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                 </svg>
             </button>
@@ -38,12 +53,13 @@
             @if ($question->tags->count() > 0)
                 <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px;">
                     @foreach ($question->tags as $tag)
-                        <span
-                            style="padding: 4px 10px; background: #27272A; color: #A1A1AA; font-size: 12px; border-radius: 6px; transition: all 0.2s;"
+                        <a href="{{ route('questions.index', ['tag' => $tag->name]) }}"
+                            onclick="event.stopPropagation();"
+                            style="padding: 4px 10px; background: #27272A; color: #A1A1AA; font-size: 12px; border-radius: 6px; transition: all 0.2s; text-decoration: none; cursor: pointer;"
                             onmouseover="this.style.background='#3F3F46'; this.style.color='#D4D4D8'"
                             onmouseout="this.style.background='#27272A'; this.style.color='#A1A1AA'">
                             {{ $tag->name }}
-                        </span>
+                        </a>
                     @endforeach
                 </div>
             @endif
@@ -92,3 +108,54 @@
         </div>
     </div>
 </div>
+
+<script>
+    function vote(questionId, type, button) {
+        fetch(`/questions/${questionId}/${type}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Update vote count
+                const voteCount = document.getElementById(`vote-count-${questionId}`);
+                voteCount.textContent = data.votes;
+
+                // Update color based on vote count
+                if (data.votes > 0) {
+                    voteCount.style.color = '#10B981';
+                } else if (data.votes < 0) {
+                    voteCount.style.color = '#F43F5E';
+                } else {
+                    voteCount.style.color = '#E4E4E7';
+                }
+
+                // Update button states
+                const upvoteBtn = button.parentElement.querySelector('button:first-child');
+                const downvoteBtn = button.parentElement.querySelector('button:last-child');
+                const upvoteSvg = upvoteBtn.querySelector('svg');
+                const downvoteSvg = downvoteBtn.querySelector('svg');
+
+                if (data.userVote === 1) {
+                    upvoteBtn.style.color = '#10B981';
+                    upvoteSvg.setAttribute('fill', 'currentColor');
+                    downvoteBtn.style.color = '#71717A';
+                    downvoteSvg.setAttribute('fill', 'none');
+                } else if (data.userVote === -1) {
+                    downvoteBtn.style.color = '#F43F5E';
+                    downvoteSvg.setAttribute('fill', 'currentColor');
+                    upvoteBtn.style.color = '#71717A';
+                    upvoteSvg.setAttribute('fill', 'none');
+                } else {
+                    upvoteBtn.style.color = '#71717A';
+                    upvoteSvg.setAttribute('fill', 'none');
+                    downvoteBtn.style.color = '#71717A';
+                    downvoteSvg.setAttribute('fill', 'none');
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
+</script>
