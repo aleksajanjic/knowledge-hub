@@ -1,4 +1,4 @@
-<ls -la /var/www/html/app/Http?php
+<?php
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
