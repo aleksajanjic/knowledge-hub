@@ -70,4 +70,10 @@ class QuestionController extends Controller
 
         return redirect()->route('home')->with('success', 'Question created successfully.');
     }
+
+    public function show(Question $question)
+    {
+        $question->load(['user', 'tags', 'votes', 'answers.user', 'answers.votes']);
+        return view("components.questions.question-detail-content", compact('question'));
+    }
 }

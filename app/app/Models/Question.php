@@ -89,4 +89,8 @@ class Question extends Model
         $this->save();
         return $totalVotes;
     }
+
+    public function answers(){
+        return $this->hasMany(Answer::class);
+    }
 }

@@ -6,7 +6,7 @@
     $hasDownvoted = $userVote && $userVote->vote == -1;
 @endphp
 
-<div
+<div onclick="openQuestionModal({{ $question->id }})"
     style="background: rgba(24, 24, 27, 0.5); border: 1px solid #27272A; border-radius: 12px; padding: 20px; margin-bottom: 16px; cursor: pointer; transition: all 0.2s;">
     <div style="display: flex; gap: 16px;">
         <!-- Vote Section -->

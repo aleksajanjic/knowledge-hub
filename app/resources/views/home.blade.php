@@ -1,4 +1,5 @@
-@include('components.question-modal')
+@include('components.questions.question-modal')
+@include('components.questions.question-detail-modal')
 
 <x-app-layout>
     <x-slot name="header">
@@ -30,7 +31,7 @@
             </div>
 
             <!-- Search Bar Component -->
-            <x-search-bar />
+            <x-questions.search-bar />
 
             <!-- Results Message -->
             @if (request('search'))
@@ -42,9 +43,9 @@
             @endif
 
             <!-- Questions List -->
-            <x-questions-list :questions="$questions" />
+            <x-questions.questions-list :questions="$questions" />
 
-            <x-pagination :paginator="$questions" />
+            <x-layout.pagination :paginator="$questions" />
         </div>
     </div>
 </x-app-layout>
