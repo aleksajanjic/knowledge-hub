@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Enums\UserRole;
 use App\Models\Question;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
@@ -13,7 +14,7 @@ class QuestionPolicy
      */
     public function viewAny(User $user): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -21,7 +22,7 @@ class QuestionPolicy
      */
     public function view(User $user, Question $question): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -29,7 +30,7 @@ class QuestionPolicy
      */
     public function create(User $user): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -37,7 +38,13 @@ class QuestionPolicy
      */
     public function update(User $user, Question $question): bool
     {
-        return false;
+        if ($user->id === $question->user_id) return true;
+
+        // Admin or moderator can update
+        return in_array($user->role, [
+            UserRole::ADMIN->value,
+            UserRole::MODERATOR->value,
+        ]);
     }
 
     /**
@@ -45,7 +52,13 @@ class QuestionPolicy
      */
     public function delete(User $user, Question $question): bool
     {
-        return false;
+        if ($user->id === $question->user_id) return true;
+
+        // Admin or moderator can delete
+        return in_array($user->role, [
+            UserRole::ADMIN->value,
+            UserRole::MODERATOR->value,
+        ]);
     }
 
     /**

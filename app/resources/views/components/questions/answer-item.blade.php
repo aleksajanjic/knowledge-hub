@@ -9,9 +9,10 @@
 
 <div class="answer-container {{ $answer->is_accepted ? 'accepted' : '' }}"
     style="display: flex; gap: 20px; padding: 20px;
-            background: {{ $answer->is_accepted ? 'rgba(16, 185, 129, 0.05)' : 'transparent' }};
-            border: 1px solid {{ $answer->is_accepted ? '#10B981' : '#27272A' }};
-            border-radius: 12px; margin-bottom: 16px;">
+           background: {{ $answer->is_accepted ? 'rgba(16, 185, 129, 0.05)' : 'transparent' }};
+           border: 1px solid {{ $answer->is_accepted ? '#10B981' : '#27272A' }};
+           border-radius: 12px; margin-bottom: 16px; position: relative;">
+
     <!-- Vote Section -->
     <div style="display: flex; flex-direction: column; align-items: center; gap: 6px; min-width: 50px;">
         <button data-type="upvote" data-voted="{{ $hasUpvoted ? '1' : '0' }}"
@@ -57,6 +58,45 @@
         @endif
     </div>
 
+    <!-- Three-dot menu -->
+    @canany(['update', 'delete'], $answer)
+        <div style="position:absolute; top:12px; right:12px;" onclick="event.stopPropagation()">
+            <div style="position: relative; display: inline-block;">
+                <button onclick="toggleDropdown({{ $answer->id }})"
+                    class="p-2 rounded text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800 transition-colors"
+                    style="background: none; border: none; cursor: pointer;">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="white" viewBox="0 0 20 20">
+                        <path
+                            d="M10 3a1.5 1.5 0 110 3 1.5 1.5 0 010-3zm0 5a1.5 1.5 0 110 3 1.5 1.5 0 010-3zm0 5a1.5 1.5 0 110 3 1.5 1.5 0 010-3z" />
+                    </svg>
+                </button>
+
+                <div id="dropdown-{{ $answer->id }}"
+                    style="display:none; position:absolute; right:0; top:100%; margin-top:4px; background:#18181B; border:1px solid #3F3F46; border-radius:8px; min-width:150px; box-shadow:0 4px 6px rgba(0,0,0,0.3); z-index:50;">
+                    @can('update', $answer)
+                        <a href="#" onclick="event.preventDefault(); openEditModal({{ $answer->id }})"
+                            style="display:block; padding:10px 16px; color:#FAFAFA; text-decoration:none; font-size:14px;"
+                            onmouseover="this.style.background='#27272A'" onmouseout="this.style.background='transparent'">
+                            Edit
+                        </a>
+                    @endcan
+                    @can('delete', $answer)
+                        <form method="POST" action="{{ route('answers.destroy', $answer) }}"
+                            onsubmit="return confirm('Are you sure you want to delete this answer?')">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit"
+                                style="width:100%; text-align:left; padding:10px 16px; background:none; border:none; color:#F43F5E; font-size:14px; cursor:pointer;"
+                                onmouseover="this.style.background='#27272A'" onmouseout="this.style.background='transparent'">
+                                Delete
+                            </button>
+                        </form>
+                    @endcan
+                </div>
+            </div>
+        </div>
+    @endcanany
+
     <!-- Content -->
     <div style="flex: 1;">
         <div style="color: #D4D4D8; font-size: 15px; line-height: 1.7; margin-bottom: 12px; white-space: pre-wrap;">
@@ -74,7 +114,6 @@
                     style="color: #FAFAFA; font-weight: 500; font-size: 14px;">{{ $answer->user->name ?? 'Unknown' }}</span>
                 <span style="color: #71717A; font-size: 13px;">{{ $answer->created_at->diffForHumans() }}</span>
             </div>
-
         </div>
     </div>
 </div>

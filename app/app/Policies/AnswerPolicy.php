@@ -13,7 +13,7 @@ class AnswerPolicy
      */
     public function viewAny(User $user): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -21,7 +21,7 @@ class AnswerPolicy
      */
     public function view(User $user, Answer $answer): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -29,7 +29,7 @@ class AnswerPolicy
      */
     public function create(User $user): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -37,7 +37,7 @@ class AnswerPolicy
      */
     public function update(User $user, Answer $answer): bool
     {
-        return false;
+        return $user->id === $answer->user_id || in_array($user->role, ['admin', 'moderator']);
     }
 
     /**
@@ -45,7 +45,7 @@ class AnswerPolicy
      */
     public function delete(User $user, Answer $answer): bool
     {
-        return false;
+        return $user->id === $answer->user_id || in_array($user->role, ['admin', 'moderator']);
     }
 
     /**
