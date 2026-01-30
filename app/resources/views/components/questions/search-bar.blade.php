@@ -34,11 +34,6 @@
                     style="padding: 4px 10px; background: #10B981; color: #18181B; font-size: 12px; border-radius: 6px; font-weight: 500;">
                     {{ request('tag') }}
                 </span>
-                <a href="{{ route('questions.index', ['search' => request('search')]) }}"
-                    style="color: #71717A; text-decoration: none; font-size: 12px; transition: color 0.2s;"
-                    onmouseover="this.style.color='#FAFAFA'" onmouseout="this.style.color='#71717A'">
-                    Clear filter
-                </a>
             </div>
         @endif
     </form>

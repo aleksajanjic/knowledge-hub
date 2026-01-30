@@ -74,7 +74,6 @@
 </div>
 
 <script>
-    // Close modals on ESC key
     document.addEventListener('keydown', function(event) {
         if (event.key === 'Escape') {
             closeTagModal('create');

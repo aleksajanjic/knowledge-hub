@@ -116,7 +116,6 @@
             url.searchParams.set(param, value);
         }
 
-        // Reset to page 1 when applying filters
         url.searchParams.delete('page');
 
         window.location.href = url.toString();

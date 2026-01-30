@@ -32,9 +32,13 @@ class QuestionFilter
     {
         if ($this->request->filled('search')) {
             $searchTerm = $this->request->search;
+
             $this->query->where(function ($q) use ($searchTerm) {
                 $q->where('title', 'like', "%{$searchTerm}%")
-                    ->orWhere('content', 'like', "%{$searchTerm}%");
+                    ->orWhere('content', 'like', "%{$searchTerm}%")
+                    ->orWhereHas('answers', function ($query) use ($searchTerm) {
+                        $query->where('body', 'like', "%{$searchTerm}%");
+                    });
             });
         }
 

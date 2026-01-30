@@ -11,7 +11,6 @@ window.acceptAnswer = function (questionId, answerId, button) {
         .then((data) => {
             if (!data.success) return;
 
-            // Reset all answers
             document
                 .querySelectorAll(".answer-container")
                 .forEach((container) => {
@@ -31,7 +30,6 @@ window.acceptAnswer = function (questionId, answerId, button) {
                     if (label) label.style.display = "none";
                 });
 
-            // Highlight the newly accepted answer if it's accepted
             if (data.accepted) {
                 const container = button.closest(".answer-container");
                 container.style.background = "rgba(16, 185, 129, 0.05)";
@@ -63,7 +61,6 @@ window.acceptAnswer = function (questionId, answerId, button) {
                 label.style.display = "flex";
             }
 
-            // Update reputation if returned
             if (data.authorReputation !== undefined) {
                 const answerContainer = button.closest(".answer-container");
                 const reputationEl = answerContainer.querySelector(

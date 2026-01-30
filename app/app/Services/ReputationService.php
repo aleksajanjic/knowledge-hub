@@ -74,6 +74,6 @@ class ReputationService
 
         $points = $isAccepted ? self::ANSWER_ACCEPTED : -self::ANSWER_ACCEPTED;
         $user->increment('reputation', $points);
-        $user->update(['reputation' => max(0, $user->reputation)]); // Don't go below 0
+        $user->update(['reputation' => max(0, $user->reputation)]);
     }
 }

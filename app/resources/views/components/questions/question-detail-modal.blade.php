@@ -41,10 +41,8 @@
         const modal = document.getElementById('question-detail-modal');
         const content = document.getElementById('question-detail-content');
 
-        // Show modal
         modal.classList.remove('hidden');
 
-        // Fetch question details
         fetch(`/questions/${questionId}/details`, {
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest'
@@ -65,14 +63,12 @@
         modal.classList.add('hidden');
     }
 
-    // Close on ESC key
     document.addEventListener('keydown', function(event) {
         if (event.key === 'Escape') {
             closeQuestionModal();
         }
     });
 
-    // Submit answer function
     window.submitAnswer = function(event, questionId) {
         event.preventDefault();
 
@@ -93,7 +89,7 @@
 
         const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content || '{{ csrf_token() }}';
 
-        fetch(`/questions/${questionId}/answers`, { // <-- Changed backtick to parenthesis
+        fetch(`/questions/${questionId}/answers`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -143,7 +139,6 @@
             });
     };
 
-    // Accept answer function
     window.acceptAnswer = function(questionId, answerId, button) {
         const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content || '{{ csrf_token() }}';
 
@@ -157,7 +152,6 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    // Reload the question details to show updated accepted status
                     openQuestionModal(questionId);
                 }
             })

@@ -27,7 +27,6 @@
                 <!-- Tab Content -->
                 <div style="padding: 24px;">
                     <div id="tab-content">
-                        <!-- Content loaded via AJAX -->
                         <div style="text-align: center; padding: 48px; color: #71717A;">
                             <svg style="width: 48px; height: 48px; margin: 0 auto; color: #10B981; animation: spin 1s linear infinite;"
                                 fill="none" stroke="currentColor" viewBox="0 0 24 24">

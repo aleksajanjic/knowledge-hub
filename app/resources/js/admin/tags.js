@@ -1,4 +1,3 @@
-// Tag functions
 window.openCreateTagModal = function () {
     document.getElementById("create-tag-modal").classList.remove("hidden");
 };

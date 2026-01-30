@@ -148,14 +148,11 @@
         const dropdown = document.getElementById(`dropdown-${questionId}`);
         const isVisible = dropdown.style.display === 'block';
 
-        // Close all other dropdowns
         document.querySelectorAll('[id^="dropdown-"]').forEach(d => d.style.display = 'none');
 
-        // Toggle current dropdown
         dropdown.style.display = isVisible ? 'none' : 'block';
     }
 
-    // Close dropdown when clicking outside
     document.addEventListener('click', function(event) {
         if (!event.target.closest('[id^="dropdown-"]') && !event.target.closest('button')) {
             document.querySelectorAll('[id^="dropdown-"]').forEach(d => d.style.display = 'none');

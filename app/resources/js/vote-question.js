@@ -2,16 +2,15 @@ window.vote = function (questionId, type, button) {
     const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
 
     fetch(`/questions/${questionId}/${type}`, {
-        // Fixed: was using backtick
         method: "POST",
         headers: {
             "Content-Type": "application/json",
-            "X-CSRF-TOKEN": csrfToken, // Fixed: get token from meta tag
+            "X-CSRF-TOKEN": csrfToken,
         },
     })
         .then((r) => r.json())
         .then((data) => {
-            const countEl = document.getElementById(`vote-count-${questionId}`); // Fixed: was using backtick
+            const countEl = document.getElementById(`vote-count-${questionId}`);
             countEl.textContent = data.votes;
             countEl.style.color =
                 data.votes > 0
@@ -42,7 +41,6 @@ window.vote = function (questionId, type, button) {
                 downSvg.setAttribute("fill", "none");
             }
 
-            // Update reputation if returned
             if (data.authorReputation !== undefined) {
                 const reputationEl = document.getElementById(
                     `reputation-${questionId}`,

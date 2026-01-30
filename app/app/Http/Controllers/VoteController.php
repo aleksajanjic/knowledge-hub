@@ -40,7 +40,7 @@ class VoteController extends Controller
         return response()->json([
             'votes' => $question->fresh()->votes,
             'userVote' => $newVote,
-            'authorReputation' => $question->user->fresh()->reputation // Add this
+            'authorReputation' => $question->user->fresh()->reputation
         ]);
     }
 
@@ -73,7 +73,7 @@ class VoteController extends Controller
         return response()->json([
             'votes' => $question->fresh()->votes,
             'userVote' => $newVote,
-            'authorReputation' => $question->user->fresh()->reputation // Add this
+            'authorReputation' => $question->user->fresh()->reputation
         ]);
     }
 }

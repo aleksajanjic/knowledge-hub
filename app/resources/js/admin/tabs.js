@@ -1,6 +1,4 @@
-// Load tab content via AJAX
 window.loadTab = function (tabName) {
-    // Update tab styling
     document.querySelectorAll('[id^="tab-"]').forEach((btn) => {
         btn.style.background = "transparent";
         btn.style.color = "#A1A1AA";
@@ -16,7 +14,6 @@ window.loadTab = function (tabName) {
     activeTab.style.color = "#10B981";
     activeTab.style.borderBottom = "2px solid #10B981";
 
-    // Show loading state
     const tabContent = document.getElementById("tab-content");
 
     if (!tabContent) return;
@@ -30,21 +27,17 @@ window.loadTab = function (tabName) {
         </div>
     `;
 
-    // Get saved page for this tab
-    const savedPage = localStorage.getItem(`admin_${tabName}_page`) || 1; // Fixed: was using backtick
+    const savedPage = localStorage.getItem(`admin_${tabName}_page`) || 1;
 
-    // Fetch tab content
     let url = `/admin/${tabName}?page=${savedPage}`;
 
     if (tabName === "categories") {
-        // Categories placeholder
         tabContent.innerHTML = `
             <div style="text-align: center; padding: 48px; color: #71717A;">
                 <p style="font-size: 18px;">Categories coming soon...</p>
             </div>
         `;
 
-        // Update URL
         const newUrl = new URL(window.location);
         newUrl.searchParams.set("tab", tabName);
         window.history.pushState({}, "", newUrl);
@@ -61,11 +54,9 @@ window.loadTab = function (tabName) {
         .then((html) => {
             tabContent.innerHTML = html;
 
-            // Save current tab and page
             localStorage.setItem("admin_active_tab", tabName);
-            localStorage.setItem(`admin_${tabName}_page`, savedPage); // Fixed: was using backtick
+            localStorage.setItem(`admin_${tabName}_page`, savedPage);
 
-            // Update URL
             const newUrl = new URL(window.location);
             newUrl.searchParams.set("tab", tabName);
             newUrl.searchParams.set("page", savedPage);
@@ -81,7 +72,6 @@ window.loadTab = function (tabName) {
         });
 };
 
-// Handle pagination clicks to save page number
 document.addEventListener("click", function (e) {
     if (e.target.closest(".pagination a")) {
         e.preventDefault();
@@ -90,15 +80,12 @@ document.addEventListener("click", function (e) {
         const page = url.searchParams.get("page") || 1;
         const activeTab = localStorage.getItem("admin_active_tab") || "users";
 
-        // Save page number
-        localStorage.setItem(`admin_${activeTab}_page`, page); // Fixed: was using backtick
+        localStorage.setItem(`admin_${activeTab}_page`, page);
 
-        // Load that page
         loadTab(activeTab);
     }
 });
 
-// On page load
 document.addEventListener("DOMContentLoaded", function () {
     const urlParams = new URLSearchParams(window.location.search);
     const activeTab =

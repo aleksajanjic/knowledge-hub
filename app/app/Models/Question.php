@@ -34,19 +34,16 @@ class Question extends Model
 
         if ($existingVote) {
             if ($existingVote->vote == 1) {
-                // Remove upvote
                 $existingVote->delete();
                 $this->decrement('votes');
                 return;
             } else {
-                // Change downvote to upvote (from -1 to +1 = +2)
                 $existingVote->update(['vote' => 1]);
                 $this->votes = $this->votes + 2;
                 $this->save();
                 return;
             }
         } else {
-            // New upvote
             $this->votes()->create([
                 'user_id' => $userId,
                 'vote' => 1
@@ -61,19 +58,16 @@ class Question extends Model
 
         if ($existingVote) {
             if ($existingVote->vote == -1) {
-                // Remove downvote
                 $existingVote->delete();
                 $this->increment('votes');
                 return;
             } else {
-                // Change upvote to downvote (from +1 to -1 = -2)
                 $existingVote->update(['vote' => -1]);
                 $this->votes = $this->votes - 2;
                 $this->save();
                 return;
             }
         } else {
-            // New downvote
             $this->votes()->create([
                 'user_id' => $userId,
                 'vote' => -1

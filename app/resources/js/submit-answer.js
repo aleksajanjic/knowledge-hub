@@ -1,4 +1,3 @@
-// Submit answer
 window.submitAnswer = function(event, questionId) {
     event.preventDefault();
 

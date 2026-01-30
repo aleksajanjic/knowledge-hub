@@ -1,4 +1,3 @@
-// Open edit modal
 window.openEditModal = function (questionId) {
     fetch(`/questions/${questionId}/edit`, {
         headers: {

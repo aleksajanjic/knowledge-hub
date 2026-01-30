@@ -11,7 +11,6 @@ window.voteAnswer = function (event, answerId, type, button) {
     })
         .then((r) => r.json())
         .then((data) => {
-            // Update vote count
             const countEl = document.getElementById(
                 `answer-vote-count-${answerId}`,
             );
@@ -23,7 +22,6 @@ window.voteAnswer = function (event, answerId, type, button) {
                       ? "#F43F5E"
                       : "#E4E4E7";
 
-            // Update vote buttons
             const container = button.parentElement;
             const upBtn = container.querySelector('[data-type="upvote"]');
             const downBtn = container.querySelector('[data-type="downvote"]');
@@ -53,7 +51,6 @@ window.voteAnswer = function (event, answerId, type, button) {
                 downSvg.setAttribute("fill", "none");
             }
 
-            // Update reputation in real-time
             if (data.authorReputation !== undefined) {
                 const reputationEl = document.getElementById(
                     `answer-reputation-${answerId}`,

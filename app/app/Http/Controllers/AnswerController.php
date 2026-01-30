@@ -62,7 +62,7 @@ class AnswerController extends Controller
         return response()->json([
             'votes' => $answer->fresh()->votes,
             'userVote' => $newVote,
-            'authorReputation' => $answer->user->fresh()->reputation // Add this
+            'authorReputation' => $answer->user->fresh()->reputation
         ]);
     }
 
@@ -95,7 +95,7 @@ class AnswerController extends Controller
         return response()->json([
             'votes' => $answer->fresh()->votes,
             'userVote' => $newVote,
-            'authorReputation' => $answer->user->fresh()->reputation // Add this
+            'authorReputation' => $answer->user->fresh()->reputation
         ]);
     }
 
