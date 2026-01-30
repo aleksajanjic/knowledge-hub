@@ -39,6 +39,8 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/questions/{question}/answers', [AnswerController::class, 'store'])->name('answers.store');
     Route::post('/questions/{question}/accept-answer/{answer}', [AnswerController::class, 'acceptAnswer'])
         ->name('answers.accept');
+    Route::delete('/answers/{answer}', [AnswerController::class, 'destroy'])
+        ->name('answers.destroy');
 });
 
 // Admin routes

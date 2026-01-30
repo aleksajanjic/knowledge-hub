@@ -13,7 +13,7 @@
 
 
 <div onclick="openQuestionModal({{ $question->id }})"
-    style="background: rgba(24,24,27,.5); border:1px solid #27272A; border-radius:12px; padding:20px; margin-bottom:16px; cursor:pointer; transition:.2s; position:relative;">
+    style="background: {{ $bgColor }}; border:1px solid {{ $borderColor }}; border-radius:12px; padding:20px; margin-bottom:16px; cursor:pointer; transition:.2s; position:relative;">
 
     <!-- Three-dot menu -->
     @canany(['update', 'delete'], $question)
