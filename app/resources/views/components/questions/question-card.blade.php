@@ -9,6 +9,8 @@
     $bgColor = $isOwner ? 'rgba(40,40,47,.5)' : 'rgba(24,24,27,.5)';
     $borderColor = $isOwner ? '#3F3F46' : '#27272A';
     $textColor = $isOwner ? '#E4E4E7' : '#FAFAFA';
+
+    $reputationColor = ($question->user->reputation ?? 0) > 0 ? '#10B981' : '#F43F5E';
 @endphp
 
 
@@ -118,10 +120,14 @@
                 <div style="display:flex; align-items:center; gap:16px;">
                     <span style="display:flex; align-items:center; gap:6px;">
                         <div
-                            style="width:24px; height:24px; border-radius:50%; background:#3F3F46; display:flex; align-items:center; justify-content:center; font-size:10px; color: #A1A1AA; font-weight: 500;">
+                            style="width:24px; height:24px; border-radius:50%; background:#3F3F46; display:flex; align-items:center; justify-content:center; font-size:10px;">
                             {{ strtoupper(substr($question->user->name ?? 'U', 0, 1)) }}
                         </div>
-                        {{ $question->user->name ?? 'Unknown' }}
+                        <span style="color: #FAFAFA; font-weight: 500;">{{ $question->user->name ?? 'Unknown' }}</span>
+                        <span style="color: {{ $reputationColor }}; font-size: 12px; font-weight: 600;"
+                            id="reputation-{{ $question->id }}">
+                            {{ $question->user->reputation ?? 0 }}
+                        </span>
                     </span>
                     <span style="display: flex; align-items: center; gap: 4px;">
                         <svg style="width: 12px; height: 12px;" fill="none" stroke="currentColor"
@@ -155,42 +161,4 @@
             document.querySelectorAll('[id^="dropdown-"]').forEach(d => d.style.display = 'none');
         }
     });
-
-    function vote(questionId, type, button) {
-        fetch(`/questions/${questionId}/${type}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                }
-            })
-            .then(r => r.json())
-            .then(data => {
-                const countEl = document.getElementById(`vote-count-${questionId}`)
-                countEl.textContent = data.votes
-                countEl.style.color = data.votes > 0 ? '#10B981' : data.votes < 0 ? '#F43F5E' : '#E4E4E7'
-
-                const wrap = button.parentElement
-                const up = wrap.children[0]
-                const down = wrap.children[2]
-                const upSvg = up.querySelector('svg')
-                const downSvg = down.querySelector('svg')
-
-                if (data.userVote === 1) {
-                    up.style.color = '#10B981'
-                    upSvg.setAttribute('fill', 'currentColor')
-                    down.style.color = '#71717A'
-                    downSvg.setAttribute('fill', 'none')
-                } else if (data.userVote === -1) {
-                    down.style.color = '#F43F5E'
-                    downSvg.setAttribute('fill', 'currentColor')
-                    up.style.color = '#71717A'
-                    upSvg.setAttribute('fill', 'none')
-                } else {
-                    up.style.color = down.style.color = '#71717A'
-                    upSvg.setAttribute('fill', 'none')
-                    downSvg.setAttribute('fill', 'none')
-                }
-            })
-    }
 </script>

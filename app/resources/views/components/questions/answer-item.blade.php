@@ -5,6 +5,7 @@
     $hasUpvoted = $userVote && $userVote->vote == 1;
     $hasDownvoted = $userVote && $userVote->vote == -1;
     $isQuestionOwner = auth()->check() && $question->user_id === auth()->id();
+    $reputationColor = ($question->user->reputation ?? 0) > 0 ? '#10B981' : '#F43F5E';
 @endphp
 
 <div class="answer-container {{ $answer->is_accepted ? 'accepted' : '' }}"
@@ -112,6 +113,10 @@
                 </div>
                 <span
                     style="color: #FAFAFA; font-weight: 500; font-size: 14px;">{{ $answer->user->name ?? 'Unknown' }}</span>
+                <span style="color: {{ $reputationColor }}; font-size: 12px; font-weight: 600;"
+                    id="answer-reputation-{{ $answer->id }}">
+                    {{ $answer->user->reputation ?? 0 }}
+                </span>
                 <span style="color: #71717A; font-size: 13px;">{{ $answer->created_at->diffForHumans() }}</span>
             </div>
         </div>

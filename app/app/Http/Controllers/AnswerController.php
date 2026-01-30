@@ -4,11 +4,18 @@ namespace App\Http\Controllers;
 
 use App\Models\Question;
 use App\Models\Answer;
-use Illuminate\Http\JsonResponse;
+use App\Services\ReputationService;
 use Illuminate\Http\Request;
 
 class AnswerController extends Controller
 {
+    protected $reputationService;
+
+    public function __construct(ReputationService $reputationService)
+    {
+        $this->reputationService = $reputationService;
+    }
+
     public function store(Request $request, Question $question)
     {
         $validated = $request->validate([
@@ -26,78 +33,99 @@ class AnswerController extends Controller
         ]);
     }
 
-    public function upvote(Answer $answer): JsonResponse
+    public function upvote(Answer $answer)
     {
-        $answer->upvote(auth()->id());
+        $user = auth()->user();
+        $existingVote = $answer->votes()->where('user_id', $user->id)->first();
+
+        $oldVote = $existingVote ? $existingVote->vote : 0;
+        $newVote = ($oldVote === 1) ? 0 : 1;
+
+        if ($existingVote) {
+            if ($newVote === 0) {
+                $existingVote->delete();
+            } else {
+                $existingVote->update(['vote' => $newVote]);
+            }
+        } else {
+            $answer->votes()->create([
+                'user_id' => $user->id,
+                'vote' => $newVote
+            ]);
+        }
+
+        $totalVotes = $answer->votes()->sum('vote');
+        $answer->update(['votes' => $totalVotes]);
+
+        $this->reputationService->updateReputationAfterVote($answer, $oldVote, $newVote);
 
         return response()->json([
             'votes' => $answer->fresh()->votes,
-            'userVote' => $answer->userVote(auth()->id())?->vote
+            'userVote' => $newVote,
+            'authorReputation' => $answer->user->fresh()->reputation // Add this
         ]);
     }
 
-    public function downvote(Answer $answer): JsonResponse
+    public function downvote(Answer $answer)
     {
-        $answer->downvote(auth()->id());
+        $user = auth()->user();
+        $existingVote = $answer->votes()->where('user_id', $user->id)->first();
+
+        $oldVote = $existingVote ? $existingVote->vote : 0;
+        $newVote = ($oldVote === -1) ? 0 : -1;
+
+        if ($existingVote) {
+            if ($newVote === 0) {
+                $existingVote->delete();
+            } else {
+                $existingVote->update(['vote' => $newVote]);
+            }
+        } else {
+            $answer->votes()->create([
+                'user_id' => $user->id,
+                'vote' => $newVote
+            ]);
+        }
+
+        $totalVotes = $answer->votes()->sum('vote');
+        $answer->update(['votes' => $totalVotes]);
+
+        $this->reputationService->updateReputationAfterVote($answer, $oldVote, $newVote);
 
         return response()->json([
             'votes' => $answer->fresh()->votes,
-            'userVote' => $answer->userVote(auth()->id())?->vote
+            'userVote' => $newVote,
+            'authorReputation' => $answer->user->fresh()->reputation // Add this
         ]);
     }
-
-    // public function accept(Question $question, Answer $answer): JsonResponse
-    // {
-    //     if ($question->user_id !== auth()->id()) {
-    //         return response()->json(['error' => 'Unauthorized'], 403);
-    //     }
-    //
-    //     $question->answers()->update(['is_accepted' => false]);
-    //     $answer->update(['is_accepted' => true]);
-    //
-    //     return response()->json(['success' => true]);
-    // }
-
-    // public function acceptAnswer($questionId, $answerId)
-    // {
-    //     $question = Question::findOrFail($questionId);
-    //     $answer = Answer::findOrFail($answerId);
-    //
-    //     // Only question owner can accept
-    //     if (auth()->id() !== $question->user_id) {
-    //         return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
-    //     }
-    //
-    //     // Unmark previously accepted answer
-    //     $question->answers()->update(['is_accepted' => false]);
-    //
-    //     // Mark this answer as accepted
-    //     $answer->update(['is_accepted' => true]);
-    //
-    //     return response()->json(['success' => true]);
-    // }
 
     public function acceptAnswer($questionId, $answerId)
     {
-        $question = \App\Models\Question::findOrFail($questionId);
-        $answer = \App\Models\Answer::findOrFail($answerId);
+        $question = Question::findOrFail($questionId);
+        $answer = Answer::findOrFail($answerId);
 
-        if (auth()->id() !== $question->user_id) {
-            return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
-        }
+        $this->authorize('accept', $answer);
 
-        if ($answer->is_accepted) {
-            // Unmark this answer
+        $wasAccepted = $answer->is_accepted;
+
+        if ($wasAccepted) {
             $answer->update(['is_accepted' => false]);
-            return response()->json(['success' => true, 'accepted' => false]);
+            $this->reputationService->updateReputationAfterAccept($answer, false);
+            return response()->json([
+                'success' => true,
+                'accepted' => false,
+                'authorReputation' => $answer->user->fresh()->reputation
+            ]);
         }
 
-        // Unmark previously accepted answer
         $question->answers()->update(['is_accepted' => false]);
-
-        // Mark this one
         $answer->update(['is_accepted' => true]);
+        $this->reputationService->updateReputationAfterAccept($answer, true);
 
-        return response()->json(['success' => true, 'accepted' => true]);
+        return response()->json([
+            'success' => true,
+            'accepted' => true,
+            'authorReputation' => $answer->user->fresh()->reputation
+        ]);
     }
 }
