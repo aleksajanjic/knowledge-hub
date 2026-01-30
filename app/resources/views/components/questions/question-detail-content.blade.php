@@ -103,14 +103,15 @@
                 <h4 style="color: #FAFAFA; font-size: 16px; font-weight: 600; margin-bottom: 12px;">
                     {{ __('Your Answer') }}
                 </h4>
-                <form id="answer-form" onsubmit="submitAnswer(event, {{ $question->id }})">
+                <form id="answer-form-{{ $question->id }}">
                     @csrf
-                    <textarea id="answer-content" name="content" rows="6" placeholder="Write your answer here..."
+                    <textarea id="answer-content-{{ $question->id }}" name="content" rows="6" placeholder="Write your answer here..."
                         style="width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #3F3F46; background: #18181B; color: white; font-size: 14px; resize: vertical;"
                         required></textarea>
+                    <span id="answer-error" style="color: #F43F5E; font-size: 13px; display: none;"></span>
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px;">
-                        <span id="answer-error" style="color: #F43F5E; font-size: 13px; display: none;"></span>
-                        <button type="submit" id="submit-answer-btn"
+                        <button type="button" id="submit-answer-btn"
+                            onclick="submitAnswer(event, {{ $question->id }})"
                             style="padding: 10px 24px; background: #10B981; color: #18181B; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 14px;">
                             {{ __('Post Answer') }}
                         </button>

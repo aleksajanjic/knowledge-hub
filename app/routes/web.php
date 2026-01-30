@@ -35,6 +35,8 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/answers/{answer}/upvote', [AnswerController::class, 'upvote'])->name('answers.upvote');
     Route::post('/answers/{answer}/downvote', [AnswerController::class, 'downvote'])->name('answers.downvote');
     Route::post('/questions/{question}/answers', [AnswerController::class, 'store'])->name('answers.store');
+    Route::post('/questions/{question}/accept-answer/{answer}', [AnswerController::class, 'acceptAnswer'])
+        ->name('answers.accept');
 });
 
 // Admin routes

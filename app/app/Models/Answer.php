@@ -75,4 +75,13 @@ class Answer extends Model
             $this->decrement('votes');
         }
     }
+
+    public function getVotesCountAttribute()
+    {
+        if (isset($this->attributes['votes'])) {
+            return (int) $this->attributes['votes'];
+        }
+
+        return $this->votes()->sum('vote');
+    }
 }

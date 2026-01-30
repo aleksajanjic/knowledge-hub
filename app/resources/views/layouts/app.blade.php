@@ -5,7 +5,6 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-
     <title>{{ config('app.name', 'Laravel') }}</title>
 
     <!-- Fonts -->
@@ -34,29 +33,6 @@
             {{ $slot }}
         </main>
     </div>
-
-    <script>
-        function openEditModal(questionId) {
-            fetch(`/questions/${questionId}/edit`, {
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest'
-                    }
-                })
-                .then(response => response.text())
-                .then(html => {
-                    const existingModal = document.getElementById('question-edit-modal');
-                    if (existingModal) {
-                        existingModal.remove();
-                    }
-
-                    document.body.insertAdjacentHTML('beforeend', html);
-                    document.getElementById('question-edit-modal').classList.remove('hidden');
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('Failed to load edit form');
-                });
-        }
-    </script>
 </body>
+
 </html>

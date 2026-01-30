@@ -81,8 +81,6 @@
         const submitBtn = document.getElementById('submit-answer-btn');
         const errorMsg = document.getElementById('answer-error');
 
-        console.log('Submitting answer:', content);
-
         if (content.trim().length < 10) {
             errorMsg.textContent = 'Answer must be at least 10 characters';
             errorMsg.style.display = 'block';
@@ -93,10 +91,9 @@
         submitBtn.disabled = true;
         submitBtn.textContent = 'Posting...';
 
-        // Get CSRF token
         const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content || '{{ csrf_token() }}';
 
-        fetch(`/questions/${questionId}/answers`, {
+        fetch(`/questions/${questionId}/answers`, { // <-- Changed backtick to parenthesis
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -108,7 +105,6 @@
                 })
             })
             .then(response => {
-                console.log('Response status:', response.status);
                 if (!response.ok) {
                     return response.text().then(text => {
                         console.error('Error response:', text);
@@ -118,18 +114,13 @@
                 return response.text();
             })
             .then(html => {
-                console.log('Success! Answer posted');
-
-                // Remove "no answers" message if exists
                 const noAnswersMsg = document.getElementById('no-answers-message');
                 if (noAnswersMsg) {
                     noAnswersMsg.remove();
                 }
 
-                // Add new answer to the list
                 document.getElementById('answers-list').insertAdjacentHTML('beforeend', html);
 
-                // Update answer count in heading
                 const heading = document.querySelector('h3');
                 if (heading) {
                     const match = heading.textContent.match(/\((\d+)\)/);
@@ -139,7 +130,6 @@
                     }
                 }
 
-                // Clear form
                 form.reset();
                 submitBtn.disabled = false;
                 submitBtn.textContent = '{{ __('Post Answer') }}';
@@ -151,55 +141,6 @@
                 submitBtn.disabled = false;
                 submitBtn.textContent = '{{ __('Post Answer') }}';
             });
-    };
-
-    // Vote answer function
-    window.voteAnswer = function(answerId, type, button) {
-        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content || '{{ csrf_token() }}';
-
-        fetch(`/answers/${answerId}/${type}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': csrfToken
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                const voteCount = document.getElementById(`answer-vote-count-${answerId}`);
-                voteCount.textContent = data.votes;
-
-                if (data.votes > 0) {
-                    voteCount.style.color = '#10B981';
-                } else if (data.votes < 0) {
-                    voteCount.style.color = '#F43F5E';
-                } else {
-                    voteCount.style.color = '#E4E4E7';
-                }
-
-                const upvoteBtn = button.parentElement.querySelector('button:first-child');
-                const downvoteBtn = button.parentElement.querySelectorAll('button')[1];
-                const upvoteSvg = upvoteBtn.querySelector('svg');
-                const downvoteSvg = downvoteBtn.querySelector('svg');
-
-                if (data.userVote === 1) {
-                    upvoteBtn.style.color = '#10B981';
-                    upvoteSvg.setAttribute('fill', 'currentColor');
-                    downvoteBtn.style.color = '#71717A';
-                    downvoteSvg.setAttribute('fill', 'none');
-                } else if (data.userVote === -1) {
-                    downvoteBtn.style.color = '#F43F5E';
-                    downvoteSvg.setAttribute('fill', 'currentColor');
-                    upvoteBtn.style.color = '#71717A';
-                    upvoteSvg.setAttribute('fill', 'none');
-                } else {
-                    upvoteBtn.style.color = '#71717A';
-                    upvoteSvg.setAttribute('fill', 'none');
-                    downvoteBtn.style.color = '#71717A';
-                    downvoteSvg.setAttribute('fill', 'none');
-                }
-            })
-            .catch(error => console.error('Error:', error));
     };
 
     // Accept answer function

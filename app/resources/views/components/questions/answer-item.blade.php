@@ -7,41 +7,51 @@
     $isQuestionOwner = auth()->check() && $question->user_id === auth()->id();
 @endphp
 
-<div style="display: flex; gap: 20px; padding: 20px; background: {{ $answer->is_accepted ? 'rgba(16, 185, 129, 0.05)' : 'transparent' }}; border: 1px solid {{ $answer->is_accepted ? '#10B981' : '#27272A' }}; border-radius: 12px; margin-bottom: 16px;">
+<div class="answer-container {{ $answer->is_accepted ? 'accepted' : '' }}"
+    style="display: flex; gap: 20px; padding: 20px;
+            background: {{ $answer->is_accepted ? 'rgba(16, 185, 129, 0.05)' : 'transparent' }};
+            border: 1px solid {{ $answer->is_accepted ? '#10B981' : '#27272A' }};
+            border-radius: 12px; margin-bottom: 16px;">
     <!-- Vote Section -->
     <div style="display: flex; flex-direction: column; align-items: center; gap: 6px; min-width: 50px;">
-        <button
-            onclick="event.stopPropagation(); voteAnswer({{ $answer->id }}, 'upvote', this)"
-            style="padding: 6px; color: {{ $hasUpvoted ? '#10B981' : '#71717A' }}; background: none; border: none; cursor: pointer; transition: color 0.2s;"
-            onmouseover="if(!this.style.color.includes('10B981')) this.style.color='#10B981'"
-            onmouseout="if(!{{ $hasUpvoted ? 'true' : 'false' }}) this.style.color='#71717A'">
-            <svg style="width: 24px; height: 24px;" fill="{{ $hasUpvoted ? 'currentColor' : 'none' }}" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"/>
-            </svg>
-        </button>
-        <span id="answer-vote-count-{{ $answer->id }}" style="font-size: 20px; font-weight: 700; color: {{ $answer->votes > 0 ? '#10B981' : ($answer->votes < 0 ? '#F43F5E' : '#E4E4E7') }};">
-            {{ $answer->votes }}
-        </span>
-        <button
-            onclick="event.stopPropagation(); voteAnswer({{ $answer->id }}, 'downvote', this)"
-            style="padding: 6px; color: {{ $hasDownvoted ? '#F43F5E' : '#71717A' }}; background: none; border: none; cursor: pointer; transition: color 0.2s;"
-            onmouseover="if(!this.style.color.includes('F43F5E')) this.style.color='#F43F5E'"
-            onmouseout="if(!{{ $hasDownvoted ? 'true' : 'false' }}) this.style.color='#71717A'">
-            <svg style="width: 24px; height: 24px;" fill="{{ $hasDownvoted ? 'currentColor' : 'none' }}" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+        <button data-type="upvote" data-voted="{{ $hasUpvoted ? '1' : '0' }}"
+            onclick="voteAnswer(event, {{ $answer->id }}, 'upvote', this)"
+            style="padding:8px;color:{{ $hasUpvoted ? '#10B981' : '#71717A' }};background:none;border:none;cursor:pointer;transition:color .2s;"
+            onmouseover="if(this.dataset.voted==='0') this.style.color='#10B981'"
+            onmouseout="if(this.dataset.voted==='0') this.style.color='#71717A'">
+            <svg style="width:28px;height:28px;" fill="{{ $hasUpvoted ? 'currentColor' : 'none' }}" stroke="currentColor"
+                viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
             </svg>
         </button>
 
-        @if($isQuestionOwner)
-            <button
-                id="accept-btn-{{ $answer->id }}"
+        <span id="answer-vote-count-{{ $answer->id }}"
+            style="font-size:20px;font-weight:700;color:{{ $answer->votes > 0 ? '#10B981' : ($answer->votes < 0 ? '#F43F5E' : '#E4E4E7') }};">
+            {{ $answer->votes_count }}
+        </span>
+
+        <button data-type="downvote" data-voted="{{ $hasDownvoted ? '1' : '0' }}"
+            onclick="voteAnswer(event, {{ $answer->id }}, 'downvote', this)"
+            style="padding:8px;color:{{ $hasDownvoted ? '#F43F5E' : '#71717A' }};background:none;border:none;cursor:pointer;transition:color .2s;"
+            onmouseover="if(this.dataset.voted==='0') this.style.color='#F43F5E'"
+            onmouseout="if(this.dataset.voted==='0') this.style.color='#71717A'">
+            <svg style="width:28px;height:28px;" fill="{{ $hasDownvoted ? 'currentColor' : 'none' }}"
+                stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+            </svg>
+        </button>
+
+        @if ($isQuestionOwner)
+            <button id="accept-btn-{{ $answer->id }}"
                 onclick="acceptAnswer({{ $question->id }}, {{ $answer->id }}, this)"
                 style="margin-top: 8px; padding: 6px; color: {{ $answer->is_accepted ? '#10B981' : '#71717A' }}; background: none; border: none; cursor: pointer; transition: color 0.2s;"
                 title="{{ $answer->is_accepted ? 'Accepted answer' : 'Mark as accepted' }}"
                 onmouseover="if(!this.style.color.includes('10B981')) this.style.color='#10B981'"
                 onmouseout="if(!{{ $answer->is_accepted ? 'true' : 'false' }}) this.style.color='#71717A'">
-                <svg style="width: 28px; height: 28px;" fill="{{ $answer->is_accepted ? 'currentColor' : 'none' }}" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                <svg style="width: 28px; height: 28px;" fill="{{ $answer->is_accepted ? 'currentColor' : 'none' }}"
+                    stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
             </button>
         @endif
@@ -56,21 +66,15 @@
         <!-- Meta -->
         <div style="display: flex; align-items: center; justify-content: space-between;">
             <div style="display: flex; align-items: center; gap: 8px;">
-                <div style="width: 28px; height: 28px; border-radius: 50%; background: #3F3F46; color: #A1A1AA; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600;">
+                <div
+                    style="width: 28px; height: 28px; border-radius: 50%; background: #3F3F46; color: #A1A1AA; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600;">
                     {{ strtoupper(substr($answer->user->name ?? 'U', 0, 1)) }}
                 </div>
-                <span style="color: #FAFAFA; font-weight: 500; font-size: 14px;">{{ $answer->user->name ?? 'Unknown' }}</span>
+                <span
+                    style="color: #FAFAFA; font-weight: 500; font-size: 14px;">{{ $answer->user->name ?? 'Unknown' }}</span>
                 <span style="color: #71717A; font-size: 13px;">{{ $answer->created_at->diffForHumans() }}</span>
             </div>
 
-            @if($answer->is_accepted)
-                <span style="display: flex; align-items: center; gap: 6px; padding: 4px 10px; background: rgba(16, 185, 129, 0.1); color: #10B981; font-size: 12px; font-weight: 600; border-radius: 6px;">
-                    <svg style="width: 14px; height: 14px;" fill="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    </svg>
-                    Accepted
-                </span>
-            @endif
         </div>
     </div>
 </div>
