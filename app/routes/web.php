@@ -5,6 +5,8 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\VoteController;
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\TagController;
+use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Route;
 
 // Home/Dashboard route
@@ -42,6 +44,14 @@ Route::middleware(['auth'])->group(function () {
 // Admin routes
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/', [AdminController::class, 'index'])->name('dashboard');
+
+    // User management
+    Route::get('/users', [UserController::class, 'index'])->name('users.index');
+    Route::resource('users', UserController::class)->except(['show']);
+
+    // Tag management
+    Route::get('/tags', [TagController::class, 'index'])->name('tags.index');
+    Route::resource('tags', TagController::class)->except(['show']);
 });
 
 require __DIR__ . '/auth.php';

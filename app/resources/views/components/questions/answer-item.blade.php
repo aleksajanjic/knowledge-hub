@@ -32,7 +32,7 @@
 
         <button data-type="downvote" data-voted="{{ $hasDownvoted ? '1' : '0' }}"
             onclick="voteAnswer(event, {{ $answer->id }}, 'downvote', this)"
-            style="padding:8px;color:{{ $hasDownvoted ? '#F43F5E' : '#71717A' }};background:none;border:none;cursor:pointer;transition:color .2s;"
+            style="padding:8px;color:{{ $hasDownvoted ? '#F43F5E' : '#71717A' }}; background:none; border:none; cursor:pointer; transition:color .2s;"
             onmouseover="if(this.dataset.voted==='0') this.style.color='#F43F5E'"
             onmouseout="if(this.dataset.voted==='0') this.style.color='#71717A'">
             <svg style="width:28px;height:28px;" fill="{{ $hasDownvoted ? 'currentColor' : 'none' }}"

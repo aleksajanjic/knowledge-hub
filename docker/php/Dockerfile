@@ -7,7 +7,8 @@ RUN apt-get update && apt-get install -y \
     libpng-dev \
     libonig-dev \
     libxml2-dev \
-    zip
+    zip \
+    gnupg
 
 RUN docker-php-ext-install \
     pdo_mysql \
@@ -16,6 +17,10 @@ RUN docker-php-ext-install \
     pcntl \
     bcmath \
     gd
+
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get install -y nodejs \
+    && npm install -g npm
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 

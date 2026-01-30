@@ -7,19 +7,18 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <!-- Tabs -->
             <div style="background: #27272A; border: 1px solid #3F3F46; border-radius: 12px; overflow: hidden;">
                 <!-- Tab Headers -->
                 <div style="display: flex; border-bottom: 1px solid #3F3F46;">
-                    <button onclick="switchTab('users')" id="tab-users"
+                    <button onclick="loadTab('users')" id="tab-users"
                         style="flex: 1; padding: 16px; background: #18181B; color: #10B981; border: none; cursor: pointer; font-weight: 600; border-bottom: 2px solid #10B981;">
                         {{ __('Users') }}
                     </button>
-                    <button onclick="switchTab('categories')" id="tab-categories"
+                    <button onclick="loadTab('categories')" id="tab-categories"
                         style="flex: 1; padding: 16px; background: transparent; color: #A1A1AA; border: none; cursor: pointer; font-weight: 600;">
                         {{ __('Categories') }}
                     </button>
-                    <button onclick="switchTab('tags')" id="tab-tags"
+                    <button onclick="loadTab('tags')" id="tab-tags"
                         style="flex: 1; padding: 16px; background: transparent; color: #A1A1AA; border: none; cursor: pointer; font-weight: 600;">
                         {{ __('Tags') }}
                     </button>
@@ -27,54 +26,33 @@
 
                 <!-- Tab Content -->
                 <div style="padding: 24px;">
-                    <!-- Users Tab -->
-                    <div id="content-users">
-                        <h3 style="color: #FAFAFA; font-size: 20px; font-weight: 600; margin-bottom: 16px;">
-                            {{ __('User Management') }}</h3>
-                        <!-- User list will go here -->
-                        <p style="color: #71717A;">Users content...</p>
-                    </div>
-
-                    <!-- Categories Tab -->
-                    <div id="content-categories" style="display: none;">
-                        <h3 style="color: #FAFAFA; font-size: 20px; font-weight: 600; margin-bottom: 16px;">
-                            {{ __('Category Management') }}</h3>
-                        <!-- Category list will go here -->
-                        <p style="color: #71717A;">Categories content...</p>
-                    </div>
-
-                    <!-- Tags Tab -->
-                    <div id="content-tags" style="display: none;">
-                        <h3 style="color: #FAFAFA; font-size: 20px; font-weight: 600; margin-bottom: 16px;">
-                            {{ __('Tag Management') }}</h3>
-                        <!-- Tag list will go here -->
-                        <p style="color: #71717A;">Tags content...</p>
+                    <div id="tab-content">
+                        <!-- Content loaded via AJAX -->
+                        <div style="text-align: center; padding: 48px; color: #71717A;">
+                            <svg style="width: 48px; height: 48px; margin: 0 auto; color: #10B981; animation: spin 1s linear infinite;"
+                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                            </svg>
+                            <p style="margin-top: 16px;">{{ __('Loading...') }}</p>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
-    <script>
-        function switchTab(tabName) {
-            // Hide all content
-            document.querySelectorAll('[id^="content-"]').forEach(el => el.style.display = 'none');
-
-            // Reset all tab buttons
-            document.querySelectorAll('[id^="tab-"]').forEach(btn => {
-                btn.style.background = 'transparent';
-                btn.style.color = '#A1A1AA';
-                btn.style.borderBottom = 'none';
-            });
-
-            // Show selected content
-            document.getElementById(`content-${tabName}`).style.display = 'block';
-
-            // Highlight selected tab
-            const activeTab = document.getElementById(`tab-${tabName}`);
-            activeTab.style.background = '#18181B';
-            activeTab.style.color = '#10B981';
-            activeTab.style.borderBottom = '2px solid #10B981';
-        }
-    </script>
 </x-app-layout>
+
+@include('admin.modals.tag-modals')
+
+<style>
+    @keyframes spin {
+        from {
+            transform: rotate(0deg);
+        }
+
+        to {
+            transform: rotate(360deg);
+        }
+    }
+</style>
