@@ -1,8 +1,18 @@
 {
-    "require-dev": {
-        "laravel/breeze": "^2.3"
+  "require-dev": {
+    "laravel/breeze": "^2.3"
+  },
+  "require": {
+    "spatie/laravel-permission": "^6.24"
+  },
+  "autoload": {
+    "psr-4": {
+      "App\\": "app/",
+      "Database\\Factories\\": "database/factories/",
+      "Database\\Seeders\\": "database/seeders/"
     },
-    "require": {
-        "spatie/laravel-permission": "^6.24"
-    }
+    "files": [
+      "app/Helpers/MarkdownHelper.php"
+    ]
+  }
 }

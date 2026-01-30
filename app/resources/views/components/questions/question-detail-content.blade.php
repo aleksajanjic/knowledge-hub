@@ -1,4 +1,5 @@
 @php
+    use App\Helpers\MarkdownHelper;
     $userVote = auth()->check() ? $question->userVote(auth()->id()) : null;
     $hasUpvoted = $userVote && $userVote->vote == 1;
     $hasDownvoted = $userVote && $userVote->vote == -1;
@@ -58,8 +59,8 @@
         </div>
 
         <!-- Question Content -->
-        <div style="color: #D4D4D8; font-size: 16px; line-height: 1.7; margin-bottom: 24px; white-space: pre-wrap;">
-            {{ $question->content }}
+        <div class="markdown-content" style="color: #D4D4D8; line-height: 1.7; margin-bottom: 24px;">
+            {!! MarkdownHelper::parse($question->content) !!}
         </div>
 
         <!-- Tags -->

@@ -19,8 +19,7 @@
                 <div class="mb-4 flex justify-end">
                     <button type="button"
                         class="inline-flex items-center gap-2 px-4 py-4 text-zinc-900 font-bold rounded-xl hover:opacity-90 transition-colors"
-                        style="background-color: #55b685;"
-                        onclick="document.getElementById('question-modal').classList.remove('hidden')">
+                        style="background-color: #55b685;" onclick="openQuestionCreateModal()">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
                             stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />

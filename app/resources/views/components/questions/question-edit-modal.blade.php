@@ -27,8 +27,9 @@
                 <label style="color: #A1A1AA; display: block; margin-bottom: 5px; font-size: 14px;">
                     {{ __('Question') }}
                 </label>
-                <textarea name="content" rows="6" required placeholder="Describe your problem in detail..."
-                    style="width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #3F3F46; background: #27272A; color: white;">{{ old('content', $question->content) }}</textarea>
+                <!-- <textarea name="content" rows="6" required placeholder="Describe your problem in detail..." -->
+                <!--     style="width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #3F3F46; background: #27272A; color: white;">{{ old('content', $question->content) }}</textarea> -->
+                <textarea id="question-content-editor" name="content" required></textarea>
             </div>
 
             <div style="margin-bottom: 20px;">

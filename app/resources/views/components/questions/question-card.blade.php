@@ -33,9 +33,8 @@
                 <!-- Dropdown menu -->
                 <div id="dropdown-{{ $question->id }}"
                     style="display: none; position: absolute; right: 0; top: 100%; margin-top: 4px; background: #18181B; border: 1px solid #3F3F46; border-radius: 8px; min-width: 150px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); z-index: 50;">
-                    <a href="#" onclick="event.preventDefault(); openEditModal({{ $question->id }})"
-                        onclick="event.stopPropagation()"
-                        style="display: block; padding: 10px 16px; color: #FAFAFA; text-decoration: none; font-size: 14px; transition: background 0.2s;"
+                    <a href="#" onclick="handleDropdownAction(event, {{ $question->id }}, 'question')"
+                        style="display:block;padding:10px 16px;color:#FAFAFA;text-decoration:none;font-size:14px;transition:background .2s;"
                         onmouseover="this.style.background='#27272A'" onmouseout="this.style.background='transparent'">
                         <svg style="width: 14px; height: 14px; display: inline-block; margin-right: 8px;" fill="none"
                             stroke="currentColor" viewBox="0 0 24 24">

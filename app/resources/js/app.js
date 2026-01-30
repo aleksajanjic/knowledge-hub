@@ -6,6 +6,8 @@ import "./vote-question";
 import "./accept-answer";
 import "./admin";
 import "./admin/index";
+import "./dropdown-action";
+import "./question-textarea"
 
 import Alpine from "alpinejs";
 

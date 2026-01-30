@@ -41,6 +41,8 @@ Route::middleware(['auth'])->group(function () {
         ->name('answers.accept');
     Route::delete('/answers/{answer}', [AnswerController::class, 'destroy'])
         ->name('answers.destroy');
+    Route::get('/answers/{answer}/edit', [AnswerController::class, 'edit'])->name('answers.edit');
+    Route::put('/answers/{answer}', [AnswerController::class, 'update'])->name('answers.update');
 });
 
 // Admin routes

@@ -1,5 +1,8 @@
-window.openEditModal = function (questionId) {
-    fetch(`/questions/${questionId}/edit`, {
+window.openEditModal = function (id, type) {
+    let fetchUrl =
+        type === "question" ? `/questions/${id}/edit` : `/answers/${id}/edit`;
+
+    fetch(fetchUrl, {
         headers: {
             "X-Requested-With": "XMLHttpRequest",
         },

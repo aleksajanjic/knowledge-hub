@@ -1,6 +1,7 @@
 @props(['answer', 'question'])
 
 @php
+    use App\Helpers\MarkdownHelper;
     $userVote = auth()->check() ? $answer->userVote(auth()->id()) : null;
     $hasUpvoted = $userVote && $userVote->vote == 1;
     $hasDownvoted = $userVote && $userVote->vote == -1;
@@ -75,7 +76,7 @@
                 <div id="dropdown-{{ $answer->id }}"
                     style="display:none; position:absolute; right:0; top:100%; margin-top:4px; background:#18181B; border:1px solid #3F3F46; border-radius:8px; min-width:150px; box-shadow:0 4px 6px rgba(0,0,0,0.3); z-index:50;">
                     @can('update', $answer)
-                        <a href="#" onclick="event.preventDefault(); openEditModal({{ $answer->id }})"
+                        <a href="#" onclick="event.preventDefault(); openEditModal({{ $answer->id }}, 'answer')"
                             style="display:block; padding:10px 16px; color:#FAFAFA; text-decoration:none; font-size:14px;"
                             onmouseover="this.style.background='#27272A'" onmouseout="this.style.background='transparent'">
                             Edit
@@ -100,8 +101,8 @@
 
     <!-- Content -->
     <div style="flex: 1;">
-        <div style="color: #D4D4D8; font-size: 15px; line-height: 1.7; margin-bottom: 12px; white-space: pre-wrap;">
-            {{ $answer->body }}
+        <div class="markdown-content" style="color: #D4D4D8; font-size: 15px; line-height: 1.7; margin-bottom: 12px;">
+            {!! MarkdownHelper::parse($answer->body) !!}
         </div>
 
         <!-- Meta -->
