@@ -45,14 +45,16 @@
                 </div>
             @endif
 
-            <!-- Category Tree -->
-            <div class="mb-6">
-                <h3 class="text-lg font-bold text-white mb-2">Categories</h3>
-                <x-categories.category-tree :categories="$categories" />
-            </div>
+            <div class="flex justify-between">
+                <!-- Category Tree -->
+                <div class="mb-6">
+                    <h3 class="text-lg font-bold text-white mb-2">Categories</h3>
+                    <x-categories.category-tree :categories="$categories" />
+                </div>
 
-            <!-- Questions List -->
-            <x-questions.questions-list :questions="$questions" />
+                <!-- Questions List -->
+                <x-questions.questions-list :questions="$questions" />
+            </div>
 
             <x-layout.pagination :paginator="$questions" />
         </div>
