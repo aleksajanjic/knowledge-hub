@@ -2,10 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-.markdown-content {
-    background-color: red;
-}
-
 /* Markdown content styles */
 .markdown-content h1,
 .markdown-content h2,

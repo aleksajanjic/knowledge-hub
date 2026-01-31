@@ -99,6 +99,35 @@ class AnswerController extends Controller
         ]);
     }
 
+    public function edit(Answer $answer)
+    {
+        $this->authorize('update', $answer);
+
+        try {
+            return view('components.questions.answer-edit-modal', compact('answer'));
+        } catch (\Throwable $e) {
+            report($e);
+            if (request()->wantsJson() || request()->ajax()) {
+                return response()->json(['message' => $e->getMessage(), 'file' => $e->getFile(), 'line' => $e->getLine()], 500);
+            }
+            throw $e;
+        }
+    }
+
+    public function update(Request $request, Answer $answer)
+    {
+        $this->authorize('update', $answer);
+
+        $validated = $request->validate([
+            'body' => 'required|string|min:10',
+        ]);
+
+        $answer->update(['body' => $validated['body']]);
+
+        return redirect()->route('questions.index')
+            ->with('success', __('Answer updated.'));
+    }
+
     public function acceptAnswer($questionId, $answerId)
     {
         $question = Question::findOrFail($questionId);

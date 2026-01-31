@@ -8,38 +8,17 @@
             ✕
         </button>
 
-        <h2 style="color: white; font-size: 24px; margin-bottom: 20px;">{{ __('Edit Question') }}</h2>
+        <h2 style="color: white; font-size: 24px; margin-bottom: 20px;">{{ __('Edit Answer') }}</h2>
 
-        <form action="{{ route('questions.update', $question) }}" method="POST">
+        <form action="{{ route('answers.update', ['answer' => $answer->id]) }}" method="POST">
             @csrf
             @method('PUT')
 
             <div style="margin-bottom: 15px;">
                 <label style="color: #A1A1AA; display: block; margin-bottom: 5px; font-size: 14px;">
-                    {{ __('Title') }}
+                    {{ __('Your Answer') }}
                 </label>
-                <input type="text" name="title" required value="{{ old('title', $question->title) }}"
-                    placeholder="What's your question?"
-                    style="width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #3F3F46; background: #27272A; color: white;">
-            </div>
-
-            <div style="margin-bottom: 15px;">
-                <label style="color: #A1A1AA; display: block; margin-bottom: 5px; font-size: 14px;">
-                    {{ __('Question') }}
-                </label>
-                <!-- <textarea name="content" rows="6" required placeholder="Describe your problem in detail..." -->
-                <!--     style="width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #3F3F46; background: #27272A; color: white;">{{ old('content', $question->content) }}</textarea> -->
-                <textarea id="question-edit-content-editor" name="content" required>{{ old('content', $question->content) }}</textarea>
-            </div>
-
-            <div style="margin-bottom: 20px;">
-                <label style="color: #A1A1AA; display: block; margin-bottom: 5px; font-size: 14px;">
-                    {{ __('Tags') }}
-                </label>
-                <input type="text" name="tags"
-                    value="{{ old('tags', $question->tags->pluck('name')->implode(', ')) }}"
-                    placeholder="e.g. javascript, react, api"
-                    style="width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #3F3F46; background: #27272A; color: white;">
+                <textarea id="answer-edit-content-editor" name="body" required>{{ old('body', $answer->body ?? '') }}</textarea>
             </div>
 
             <div style="display: flex; gap: 10px; justify-content: flex-end;">

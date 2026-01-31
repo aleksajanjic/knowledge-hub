@@ -7,7 +7,8 @@ import "./accept-answer";
 import "./admin";
 import "./admin/index";
 import "./dropdown-action";
-import "./question-textarea"
+import "./question-textarea";
+import "./answer-textarea";
 
 import Alpine from "alpinejs";
 

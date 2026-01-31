@@ -106,7 +106,7 @@
                 </h4>
                 <form id="answer-form-{{ $question->id }}">
                     @csrf
-                    <textarea id="answer-content-{{ $question->id }}" name="content" rows="6" placeholder="Write your answer here..."
+                    <textarea id="answer-content-{{ $question->id }}" class="answer-content-editor" name="content" rows="6" placeholder="Write your answer here..."
                         style="width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #3F3F46; background: #18181B; color: white; font-size: 14px; resize: vertical;"
                         required></textarea>
                     <span id="answer-error" style="color: #F43F5E; font-size: 13px; display: none;"></span>

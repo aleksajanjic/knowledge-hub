@@ -1,6 +1,8 @@
 @props(['question'])
 
 @php
+    use App\Helpers\MarkdownHelper;
+
     $userVote = auth()->check() ? $question->userVote(auth()->id()) : null;
     $hasUpvoted = $userVote && $userVote->vote == 1;
     $hasDownvoted = $userVote && $userVote->vote == -1;
@@ -96,10 +98,9 @@
                 {{ $question->title }}
             </h3>
 
-            <p
-                style="color:#71717A; font-size:14px; margin-bottom:12px; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;">
-                {{ $question->content }}
-            </p>
+            <div class="markdown-content" style="color: #D4D4D8; line-height: 1.7; margin-bottom: 24px;">
+                {!! MarkdownHelper::parse($question->content) !!}
+            </div>
 
             @if ($question->tags->count())
                 <div style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:12px;"
