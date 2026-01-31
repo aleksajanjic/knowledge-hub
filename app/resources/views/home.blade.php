@@ -1,5 +1,6 @@
 @include('components.questions.question-modal')
 @include('components.questions.question-detail-modal')
+@props(['categories'])
 
 <x-app-layout>
     <x-slot name="header">
@@ -43,6 +44,12 @@
                         style="color: #FAFAFA; font-weight: 500;">{{ request('search') }}</span>"
                 </div>
             @endif
+
+            <!-- Category Tree -->
+            <div class="mb-6">
+                <h3 class="text-lg font-bold text-white mb-2">Categories</h3>
+                <x-categories.category-tree :categories="$categories" />
+            </div>
 
             <!-- Questions List -->
             <x-questions.questions-list :questions="$questions" />

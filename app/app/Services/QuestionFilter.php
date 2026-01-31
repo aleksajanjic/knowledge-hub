@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Category;
 use App\Models\Question;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
@@ -14,7 +15,7 @@ class QuestionFilter
     public function __construct(Request $request)
     {
         $this->request = $request;
-        $this->query = Question::with(['user', 'tags', 'votes']);
+        $this->query = Question::with(['user', 'tags', 'votes', 'category']);
     }
 
     public function apply(): Builder
@@ -23,9 +24,38 @@ class QuestionFilter
             ->applyTagFilter()
             ->applyStatusFilter()
             ->applyDateFilter()
-            ->applySort();
+            ->applySort()
+            ->applyCategoryFilter();
 
         return $this->query;
+    }
+
+    protected function applyCategoryFilter(): self
+    {
+        if (!$this->request->filled('category')) {
+            return $this;
+        }
+
+        $category = Category::with('recursiveChildren')->find($this->request->category);
+        if (!$category) {
+            return $this;
+        }
+
+        $ids = $this->getDescendantIds($category);
+        $this->query->whereIn('category_id', $ids);
+
+        return $this;
+    }
+
+    protected function getDescendantIds(Category $category): array
+    {
+        $ids = [$category->id];
+
+        foreach ($category->children as $child) {
+            $ids = array_merge($ids, $this->getDescendantIds($child));
+        }
+
+        return $ids;
     }
 
     protected function applySearch(): self
@@ -90,7 +120,7 @@ class QuestionFilter
         $sort = $this->request->get('sort', 'latest');
 
         match ($sort) {
-            'votes' => $this->query->orderBy('votes', 'desc'),
+            'votes' => $this->query->withCount('votes')->orderBy('votes_count', 'desc'),
             'oldest' => $this->query->orderBy('created_at', 'asc'),
             default => $this->query->orderBy('created_at', 'desc')
         };

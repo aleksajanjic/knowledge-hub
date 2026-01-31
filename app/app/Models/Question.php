@@ -84,7 +84,13 @@ class Question extends Model
         return $totalVotes;
     }
 
-    public function answers(){
+    public function answers()
+    {
         return $this->hasMany(Answer::class);
+    }
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
     }
 }

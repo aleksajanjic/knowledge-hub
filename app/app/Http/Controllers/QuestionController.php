@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use App\Models\Question;
 use App\Models\Tag;
 use App\Services\QuestionFilter;
@@ -14,14 +15,16 @@ class QuestionController extends Controller
     public function index(Request $request): View
     {
         $questionFilter = new QuestionFilter($request);
-        $questions = $questionFilter->apply()->paginate(10);
+        $questions = $questionFilter->apply()->paginate(10)->withQueryString();
 
         $allTags = Tag::withCount('questions')
             ->orderBy('questions_count', 'desc')
             ->take(20)
             ->get();
 
-        return view('home', compact('questions', 'allTags'));
+        $categories = Category::with('recursiveChildren')->roots()->get();
+
+        return view('home', compact('questions', 'allTags', 'categories'));
     }
 
     public function store(Request $request): RedirectResponse
@@ -30,6 +33,7 @@ class QuestionController extends Controller
             'title' => 'required|string|max:255',
             'content' => 'required|string',
             'tags' => 'nullable|string',
+            'category_id' => 'nullable|exists:categories,id',
         ]);
 
         $question = Question::create([
@@ -52,6 +56,12 @@ class QuestionController extends Controller
         return view('components.questions.question-detail-content', compact('question'));
     }
 
+    public function create()
+    {
+        $categories = Category::with('recursiveChildren')->roots()->get();
+        return view('questions.create', compact('categories'));
+    }
+
     public function edit(Question $question)
     {
         $question->load('tags');
@@ -64,7 +74,8 @@ class QuestionController extends Controller
         $validated = $request->validate([
             'title' => "required|string|max:255",
             'content' => "required|string",
-            "tags" => "nullable|string"
+            "tags" => "nullable|string",
+            'category_id' => 'nullable|exists:categories,id',
         ]);
 
         $question->update([

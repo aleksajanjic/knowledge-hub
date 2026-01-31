@@ -26,7 +26,7 @@
                 <label style="color: #A1A1AA; display: block; margin-bottom: 5px; font-size: 14px;">
                     {{ __('Question Details') }}
                 </label>
-                <textarea id="question-content-editor" name="content" required></textarea>
+                <textarea id="question-content-editor" name="content"></textarea>
             </div>
 
             <div style="margin-bottom: 20px;">
