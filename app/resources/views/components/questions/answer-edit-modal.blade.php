@@ -1,9 +1,9 @@
-<div id="question-edit-modal"
+<div id="answer-edit-modal"
     class="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4 hidden"
     onclick="if(event.target === this) { this.classList.add('hidden'); }">
     <div style="background: #18181B; width: 60%; padding: 30px; border-radius: 15px; position: relative;">
         <!-- Close X Button -->
-        <button type="button" onclick="document.getElementById('question-edit-modal').classList.add('hidden')"
+        <button type="button" onclick="document.getElementById('answer-edit-modal').classList.add('hidden')"
             style="position: absolute; top: 20px; right: 20px; background: none; border: none; color: #71717A; font-size: 24px; cursor: pointer; padding: 5px 10px;">
             ✕
         </button>
@@ -22,7 +22,7 @@
             </div>
 
             <div style="display: flex; gap: 10px; justify-content: flex-end;">
-                <button type="button" onclick="document.getElementById('question-edit-modal').classList.add('hidden')"
+                <button type="button" onclick="document.getElementById('answer-edit-modal').classList.add('hidden')"
                     style="padding: 10px 20px; background: transparent; color: #A1A1AA; border: none; border-radius: 8px; cursor: pointer; font-size: 14px;">
                     {{ __('Cancel') }}
                 </button>
@@ -38,7 +38,7 @@
 <script>
     document.addEventListener('keydown', function(event) {
         if (event.key === 'Escape') {
-            const modal = document.getElementById('question-edit-modal');
+            const modal = document.getElementById('answer-edit-modal');
             if (modal && !modal.classList.contains('hidden')) {
                 modal.classList.add('hidden');
             }

@@ -1,9 +1,9 @@
 let questionEditEditor = null;
 let answerEditEditor = null;
+const modalStack = [];
 
 const easyMDEConfig = {
     spellChecker: false,
-    placeholder: "Describe your problem in detail...",
     minHeight: "200px",
     status: false,
     toolbar: [
@@ -22,78 +22,78 @@ const easyMDEConfig = {
     ],
 };
 
-function destroyEditEditors() {
-    if (questionEditEditor) {
+function pushModal(modalEl, type) {
+    modalStack.push({ el: modalEl, type });
+}
+
+function removeModalFromStack(modalEl) {
+    const i = modalStack.findIndex((m) => m.el === modalEl);
+    if (i !== -1) modalStack.splice(i, 1);
+}
+
+function destroyEditor(type) {
+    if (type === "question" && questionEditEditor) {
         questionEditEditor.toTextArea();
         questionEditEditor = null;
     }
-    if (answerEditEditor) {
+    if (type === "answer" && answerEditEditor) {
         answerEditEditor.toTextArea();
         answerEditEditor = null;
     }
 }
 
 window.openEditModal = function (id, type) {
-    let fetchUrl =
-        type === "question" ? `/questions/${id}/edit` : `/answers/${id}/edit`;
+    const isQuestion = type === "question";
+    const fetchUrl = isQuestion
+        ? `/questions/${id}/edit`
+        : `/answers/${id}/edit`;
+    const modalId = isQuestion ? "question-edit-modal" : "answer-edit-modal";
+    const textareaId = isQuestion
+        ? "question-edit-content-editor"
+        : "answer-edit-content-editor";
 
-    fetch(fetchUrl, {
-        headers: {
-            "X-Requested-With": "XMLHttpRequest",
-        },
-        credentials: "same-origin",
-    })
-        .then(async (response) => {
-            if (!response.ok) {
-                let msg = `${response.status} ${response.statusText}`;
-                try {
-                    const data = await response.json();
-                    if (data.message) msg += "\n" + data.message;
-                } catch (_) {}
-                throw new Error(msg);
-            }
-            return response.text();
-        })
+    fetch(fetchUrl, { headers: { "X-Requested-With": "XMLHttpRequest" } })
+        .then((r) => r.text())
         .then((html) => {
-            const existingModal = document.getElementById("question-edit-modal");
-            if (existingModal) {
-                destroyEditEditors();
-                existingModal.remove();
-            }
             document.body.insertAdjacentHTML("beforeend", html);
-            const modal = document.getElementById("question-edit-modal");
-            if (!modal) {
-                throw new Error("Edit form HTML invalid (missing modal element)");
-            }
-            modal.classList.remove("hidden");
 
-            if (typeof EasyMDE !== "undefined") {
-                if (type === "question") {
-                    const textarea = document.getElementById(
-                        "question-edit-content-editor",
-                    );
-                    if (textarea) {
-                        questionEditEditor = new EasyMDE({
-                            element: textarea,
-                            ...easyMDEConfig,
-                        });
-                    }
-                } else if (type === "answer") {
-                    const textarea = document.getElementById(
-                        "answer-edit-content-editor",
-                    );
-                    if (textarea) {
-                        answerEditEditor = new EasyMDE({
-                            element: textarea,
-                            ...easyMDEConfig,
-                            placeholder: "Write your answer here...",
-                        });
-                    }
-                }
+            const modal = document.getElementById(modalId);
+            if (!modal) return;
+
+            modal.classList.remove("hidden");
+            pushModal(modal, type);
+
+            const textarea = document.getElementById(textareaId);
+            if (textarea && typeof EasyMDE !== "undefined") {
+                const editor = new EasyMDE({
+                    element: textarea,
+                    ...easyMDEConfig,
+                    placeholder: isQuestion
+                        ? "Describe your problem in detail..."
+                        : "Write your answer here...",
+                });
+
+                if (isQuestion) questionEditEditor = editor;
+                else answerEditEditor = editor;
             }
-        })
-        .catch((error) => {
-            console.error("Edit form error:", error);
-            alert("Failed to load edit form" + (error.message ? ": " + error.message : ""));
         });
 };
+
+window.closeTopModal = function () {
+    if (!modalStack.length) return;
+
+    const { el, type } = modalStack.pop();
+    destroyEditor(type);
+    el.remove();
+};
+
+document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") {
+        window.closeTopModal();
+    }
+});
+
+document.addEventListener("submit", function () {
+    if (questionEditEditor) questionEditEditor.codemirror.save();
+    if (answerEditEditor) answerEditEditor.codemirror.save();
+});
