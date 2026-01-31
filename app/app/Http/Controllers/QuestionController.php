@@ -15,7 +15,7 @@ class QuestionController extends Controller
     public function index(Request $request): View
     {
         $questionFilter = new QuestionFilter($request);
-        $questions = $questionFilter->apply()->paginate(10)->withQueryString();
+        $questions = $questionFilter->apply()->withCount('answers')->paginate(10)->withQueryString();
 
         $allTags = Tag::withCount('questions')
             ->orderBy('questions_count', 'desc')

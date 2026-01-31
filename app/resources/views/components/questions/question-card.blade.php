@@ -13,6 +13,7 @@
     $textColor = $isOwner ? '#E4E4E7' : '#FAFAFA';
 
     $reputationColor = ($question->user->reputation ?? 0) > 0 ? '#10B981' : '#F43F5E';
+    $numOfAns = $question->answers_count;
 @endphp
 
 
@@ -97,6 +98,9 @@
             <h3 style="color:#FAFAFA; font-size:18px; font-weight:500; margin-bottom:8px;">
                 {{ $question->title }}
             </h3>
+            <p style="color: #D4D4D8; line-height: 1.7; margin-bottom: 24px;"> {{ $numOfAns }}
+                {{ $numOfAns == 1 ? 'answer' : 'answers' }}
+            </p>
 
             <div class="markdown-content" style="color: #D4D4D8; line-height: 1.7; margin-bottom: 24px;">
                 {!! MarkdownHelper::parse($question->content) !!}
