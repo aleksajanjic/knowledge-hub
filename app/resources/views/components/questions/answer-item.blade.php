@@ -108,17 +108,26 @@
         <!-- Meta -->
         <div style="display: flex; align-items: center; justify-content: space-between;">
             <div style="display: flex; align-items: center; gap: 8px;">
-                <div
-                    style="width: 28px; height: 28px; border-radius: 50%; background: #3F3F46; color: #A1A1AA; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600;">
-                    {{ strtoupper(substr($answer->user->name ?? 'U', 0, 1)) }}
-                </div>
-                <span
-                    style="color: #FAFAFA; font-weight: 500; font-size: 14px;">{{ $answer->user->name ?? 'Unknown' }}</span>
+                @if ($answer->user && $answer->user->profile_image)
+                    <img src="{{ asset('storage/' . $answer->user->profile_image) }}" alt="{{ $answer->user->name }}"
+                        style="width:28px; height:28px; border-radius:50%; object-cover; border:1px solid #3F3F46;">
+                @else
+                    <div
+                        style="width:28px; height:28px; border-radius:50%; background:#3F3F46; color:#A1A1AA; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:600;">
+                        {{ strtoupper(substr($answer->user->name ?? 'U', 0, 1)) }}
+                    </div>
+                @endif
+
+                <span style="color: #FAFAFA; font-weight: 500; font-size: 14px;">
+                    {{ $answer->user->name ?? 'Unknown' }}
+                </span>
                 <span style="color: {{ $reputationColor }}; font-size: 12px; font-weight: 600;"
                     id="answer-reputation-{{ $answer->id }}">
                     {{ $answer->user->reputation ?? 0 }}
                 </span>
-                <span style="color: #71717A; font-size: 13px;">{{ $answer->created_at->diffForHumans() }}</span>
+                <span style="color: #71717A; font-size: 13px;">
+                    {{ $answer->created_at->diffForHumans() }}
+                </span>
             </div>
         </div>
     </div>

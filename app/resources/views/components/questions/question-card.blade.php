@@ -123,10 +123,17 @@
             <div style="display:flex; justify-content:space-between; font-size:12px; color:#71717A;">
                 <div style="display:flex; align-items:center; gap:16px;">
                     <span style="display:flex; align-items:center; gap:6px;">
-                        <div
-                            style="width:24px; height:24px; border-radius:50%; background:#3F3F46; display:flex; align-items:center; justify-content:center; font-size:10px;">
-                            {{ strtoupper(substr($question->user->name ?? 'U', 0, 1)) }}
-                        </div>
+                        @if ($question->user && $question->user->profile_image)
+                            <img src="{{ asset('storage/' . $question->user->profile_image) }}"
+                                alt="{{ $question->user->name }}"
+                                style="width:24px; height:24px; border-radius:50%; object-cover; border:1px solid #3F3F46;">
+                        @else
+                            <div
+                                style="width:24px; height:24px; border-radius:50%; background:#3F3F46; display:flex; align-items:center; justify-content:center; font-size:10px; color:#FAFAFA;">
+                                {{ strtoupper(substr($question->user->name ?? 'U', 0, 1)) }}
+                            </div>
+                        @endif
+
                         <span style="color: #FAFAFA; font-weight: 500;">{{ $question->user->name ?? 'Unknown' }}</span>
                         <span style="color: {{ $reputationColor }}; font-size: 12px; font-weight: 600;"
                             id="reputation-{{ $question->id }}">
