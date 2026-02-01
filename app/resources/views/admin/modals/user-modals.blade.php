@@ -45,6 +45,20 @@
                 </button>
             </div>
 
+            <div style="margin-bottom: 20px;">
+                <label style="color: #A1A1AA; display: block; margin-bottom: 5px; font-size: 14px;">
+                    {{ __('Role') }}
+                </label>
+
+                <select name="role" required
+                    style="width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #3F3F46; background: #27272A; color: white;">
+                    <option value="" disabled selected>Select role</option>
+                    <option value="user">Member</option>
+                    <option value="moderator">Moderator</option>
+                    <option value="admin">Admin</option>
+                </select>
+            </div>
+
             <div style="display: flex; gap: 10px; justify-content: flex-end;">
                 <button type="button" onclick="closeUserModal('create')"
                     style="padding: 10px 20px; background: transparent; color: #A1A1AA; border: 1px solid #3F3F46; border-radius: 8px; cursor: pointer; font-size: 14px;">
@@ -89,6 +103,20 @@
                 </label>
                 <input type="email" id="edit-user-email" name="email" required placeholder="Add Email..."
                     style="width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #3F3F46; background: #27272A; color: white;">
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <label style="color: #A1A1AA; display: block; margin-bottom: 5px; font-size: 14px;">
+                    {{ __('Role') }}
+                </label>
+
+                <select id='edit-user-role' name="role" required
+                    style="width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #3F3F46; background: #27272A; color: white;">
+                    <option value="" disabled selected>Select role</option>
+                    <option value="user">Member</option>
+                    <option value="moderator">Moderator</option>
+                    <option value="admin">Admin</option>
+                </select>
             </div>
 
             <div style="display: flex; gap: 10px; justify-content: flex-end;">

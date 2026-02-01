@@ -8,6 +8,7 @@ window.editUser = function (userId) {
         .then((user) => {
             document.getElementById("edit-user-name").value = user.name;
             document.getElementById("edit-user-email").value = user.email;
+            document.getElementById("edit-user-role").value = user.role;
             document.getElementById("edit-user-form").action =
                 `/admin/users/${userId}`;
             document
