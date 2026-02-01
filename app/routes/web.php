@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\TagController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\AIController;
+use App\Http\Controllers\UserProfileController;
 use Illuminate\Support\Facades\Route;
 
 // Home/Dashboard route
@@ -45,6 +46,11 @@ Route::middleware(['auth'])->group(function () {
         ->name('answers.destroy');
     Route::get('/answers/{answer}/edit', [AnswerController::class, 'edit'])->name('answers.edit');
     Route::put('/answers/{answer}', [AnswerController::class, 'update'])->name('answers.update');
+
+    Route::get('/profile/stats', [UserProfileController::class, 'show'])
+        ->name('profile.show')
+        ->middleware('auth');
+    Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
 });
 
 Route::middleware(['auth', 'admin'])

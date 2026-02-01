@@ -45,4 +45,20 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    /**
+     * Get all questions asked by the user
+     */
+    public function questions()
+    {
+        return $this->hasMany(Question::class);
+    }
+
+    /**
+     * Get all answers given by the user
+     */
+    public function answers()
+    {
+        return $this->hasMany(Answer::class);
+    }
 }

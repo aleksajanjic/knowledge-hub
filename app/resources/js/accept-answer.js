@@ -1,10 +1,14 @@
 window.acceptAnswer = function (questionId, answerId, button) {
+    const csrfToken =
+        document.querySelector('meta[name="csrf-token"]')?.content ||
+        "{{ csrf_token() }}";
+
     fetch(`/questions/${questionId}/accept-answer/${answerId}`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
-            "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]')
-                .content,
+            "X-CSRF-TOKEN": csrfToken,
+            Accept: "text/html",
         },
     })
         .then((res) => res.json())
