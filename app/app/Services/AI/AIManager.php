@@ -38,10 +38,13 @@ class AIManager
 
     public function generateAnswer(string $question, ?string $context = null): array
     {
+        $lastException = null;
+
         if ($this->primaryProvider && $this->primaryProvider->isAvailable()) {
             try {
                 return $this->primaryProvider->generateAnswer($question, $context);
             } catch (Exception $e) {
+                $lastException = $e;
                 Log::warning("Primary AI provider ({$this->primaryProvider->getProviderName()}) failed: {$e->getMessage()}");
             }
         }
@@ -52,13 +55,18 @@ class AIManager
                     Log::info("Using fallback AI provider: {$provider->getProviderName()}");
                     return $provider->generateAnswer($question, $context);
                 } catch (Exception $e) {
+                    $lastException = $e;
                     Log::warning("Fallback AI provider ({$provider->getProviderName()}) failed: {$e->getMessage()}");
                     continue;
                 }
             }
         }
 
-        throw new \Exception('No AI providers are available at this time.');
+        $message = 'No AI providers are available at this time.';
+        if ($lastException) {
+            $message .= ' Last error: ' . $lastException->getMessage();
+        }
+        throw new \Exception($message, 0, $lastException);
     }
 
     public function getPrimaryProvider(): ?AIServiceInterface

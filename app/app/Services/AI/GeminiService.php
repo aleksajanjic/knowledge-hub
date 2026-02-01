@@ -16,8 +16,8 @@ class GeminiService implements AIServiceInterface
     public function __construct()
     {
         $this->apiKey = config('services.gemini.api_key', '');
-        $this->model = config('services.gemini.model', 'gemini-1.5-flash');
-        $this->baseUrl = 'https://generativelanguage.googleapis.com/v1';
+        $this->model = config('services.gemini.model', 'gemini-1.5-flash-preview');
+        $this->baseUrl = 'https://generativelanguage.googleapis.com/v1beta';
     }
 
     public function generateAnswer(string $question, ?string $context = null): array
