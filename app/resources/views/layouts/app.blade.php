@@ -14,9 +14,23 @@
     <!-- EasyMDE CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.css">
 
+    <!-- Vite CSS/JS -->
+    @if (app()->environment('local') && file_exists(base_path('node_modules/.vite/development.js')))
+        @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @else
+        @php
+            $manifestPath = public_path('build/manifest.json');
+            $manifest = file_exists($manifestPath) ? json_decode(file_get_contents($manifestPath), true) : [];
+        @endphp
 
-    <!-- Scripts -->
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+        @if (isset($manifest['resources/css/app.css']))
+            <link rel="stylesheet" href="{{ asset('build/' . $manifest['resources/css/app.css']['file']) }}">
+        @endif
+
+        @if (isset($manifest['resources/js/app.js']))
+            <script src="{{ asset('build/' . $manifest['resources/js/app.js']['file']) }}" defer></script>
+        @endif
+    @endif
 </head>
 
 <body class="font-sans antialiased">
@@ -38,6 +52,7 @@
         </main>
     </div>
 
+    <!-- EasyMDE JS -->
     <script src="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.js"></script>
 </body>
 

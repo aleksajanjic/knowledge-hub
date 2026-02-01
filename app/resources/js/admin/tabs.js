@@ -28,22 +28,7 @@ window.loadTab = function (tabName) {
     `;
 
     const savedPage = localStorage.getItem(`admin_${tabName}_page`) || 1;
-
     let url = `/admin/${tabName}?page=${savedPage}`;
-
-    if (tabName === "categories") {
-        tabContent.innerHTML = `
-            <div style="text-align: center; padding: 48px; color: #71717A;">
-                <p style="font-size: 18px;">Categories coming soon...</p>
-            </div>
-        `;
-
-        const newUrl = new URL(window.location);
-        newUrl.searchParams.set("tab", tabName);
-        window.history.pushState({}, "", newUrl);
-
-        return;
-    }
 
     fetch(url, {
         headers: {

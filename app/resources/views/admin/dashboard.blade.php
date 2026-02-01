@@ -43,6 +43,8 @@
 </x-app-layout>
 
 @include('admin.modals.tag-modals')
+@include('admin.modals.category-modals')
+@include('admin.modals.user-modals')
 
 <style>
     @keyframes spin {

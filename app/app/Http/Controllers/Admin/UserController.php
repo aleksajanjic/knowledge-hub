@@ -36,7 +36,14 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'required|string|max:255|unique:users,name',
+            'email' => 'required|string|email|max:255|unique:users,email',
+            'password' => 'required|string|min:8',
+        ]);
+
+        User::create($validated);
+        return redirect()->route("admin.dashboard")->with("success", "User created successfully");
     }
 
     /**
@@ -50,17 +57,24 @@ class UserController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(User $user)
     {
-        //
+        return response()->json($user);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, User $user)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'required|string|max:255|unique:users,name,' . $user->id,
+            'email' => 'required|string|email|max:255|unique:users,email,' . $user->id
+        ]);
+
+        $user->update($validated);
+
+        return redirect()->route('admin.dashboard')->with('success', 'User updated successfully.');
     }
 
     /**
