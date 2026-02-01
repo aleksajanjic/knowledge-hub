@@ -49,7 +49,17 @@
                 <!-- Category Tree -->
                 <div class="mb-6">
                     <h3 class="text-lg font-bold text-white mb-2">Categories</h3>
+
                     <x-categories.category-tree :categories="$categories" />
+
+                    @if (request()->filled('category'))
+                        <div class="mt-4">
+                            <a href="{{ route('questions.index', request()->except('category')) }}"
+                                class="inline-block px-4 py-2 text-sm rounded-lg bg-zinc-900 text-white border border-zinc-600 hover:bg-zinc-800 hover:border-zinc-400 transition-colors">
+                                Clear Filter
+                            </a>
+                        </div>
+                    @endif
                 </div>
 
                 <!-- Questions List -->
