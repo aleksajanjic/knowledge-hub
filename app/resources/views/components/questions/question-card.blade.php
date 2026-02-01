@@ -143,6 +143,14 @@
                     </span>
                 </div>
             </div>
+            @if ($question->category)
+                <div style="margin-bottom:12px; margin-top:12px">
+                    <span
+                        style="font-size:12px; color:#A1A1AA; background:#27272A; padding:4px 8px; border-radius:6px;">
+                        {{ $question->category->name }}
+                    </span>
+                </div>
+            @endif
         </div>
     </div>
 </div>

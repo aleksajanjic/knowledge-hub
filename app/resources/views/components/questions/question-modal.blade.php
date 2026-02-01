@@ -31,6 +31,27 @@
 
             <div style="margin-bottom: 20px;">
                 <label style="color: #A1A1AA; display: block; margin-bottom: 5px; font-size: 14px;">
+                    {{ __('Category') }}
+                </label>
+                <select name="category_id" required
+                    style="width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #3F3F46; background: #27272A; color: white;">
+                    <option value="">Select category</option>
+                    @foreach ($categories as $category)
+                        <option value="{{ $category->id }}">{{ $category->name }}</option>
+                        @if ($category->recursiveChildren)
+                            @foreach ($category->recursiveChildren as $child)
+                                <option value="{{ $child->id }}">-- {{ $child->name }}</option>
+                            @endforeach
+                        @endif
+                    @endforeach
+                </select>
+                <small style="color: #71717A; font-size: 12px; display: block; margin-top: 4px;">
+                    Pick the category for this question
+                </small>
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <label style="color: #A1A1AA; display: block; margin-bottom: 5px; font-size: 14px;">
                     {{ __('Tags') }}
                 </label>
                 <input type="text" name="tags" placeholder="e.g. javascript, react, api"

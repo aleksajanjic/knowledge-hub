@@ -7,7 +7,6 @@ use App\Models\Answer;
 use App\Models\Question;
 use App\Services\AI\AIManager;
 use Exception;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class AutoAnswerService

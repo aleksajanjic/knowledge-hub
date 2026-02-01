@@ -33,13 +33,14 @@ class QuestionController extends Controller
             'title' => 'required|string|max:255',
             'content' => 'required|string',
             'tags' => 'nullable|string',
-            'category_id' => 'nullable|exists:categories,id',
+            'category_id' => 'exists:categories,id',
         ]);
 
         $question = Question::create([
             'title' => $validated['title'],
             'content' => $validated['content'],
             'user_id' => auth()->id(),
+            'category_id' => $validated['category_id'] ?? null,
         ]);
 
         if (!empty($validated['tags'])) {
@@ -65,8 +66,9 @@ class QuestionController extends Controller
     public function edit(Question $question)
     {
         $question->load('tags');
+        $categories = Category::with('recursiveChildren')->roots()->get();
 
-        return view('components.questions.question-edit-modal', compact('question'));
+        return view('components.questions.question-edit-modal', compact('question', 'categories'));
     }
 
     public function update(Request $request, Question $question): RedirectResponse
@@ -81,6 +83,7 @@ class QuestionController extends Controller
         $question->update([
             "title" => $validated['title'],
             "content" => $validated['content'],
+            "category_id" => $validated['category_id']
         ]);
 
         $question->tags()->detach();

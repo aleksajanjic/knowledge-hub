@@ -27,8 +27,6 @@
                 <label style="color: #A1A1AA; display: block; margin-bottom: 5px; font-size: 14px;">
                     {{ __('Question') }}
                 </label>
-                <!-- <textarea name="content" rows="6" required placeholder="Describe your problem in detail..." -->
-                <!--     style="width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #3F3F46; background: #27272A; color: white;">{{ old('content', $question->content) }}</textarea> -->
                 <textarea id="question-edit-content-editor" name="content" required>{{ old('content', $question->content) }}</textarea>
             </div>
 
@@ -40,6 +38,32 @@
                     value="{{ old('tags', $question->tags->pluck('name')->implode(', ')) }}"
                     placeholder="e.g. javascript, react, api"
                     style="width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #3F3F46; background: #27272A; color: white;">
+            </div>
+            <div style="margin-bottom: 20px;">
+                <label style="color: #A1A1AA; display: block; margin-bottom: 5px; font-size: 14px;">
+                    {{ __('Category') }}
+                </label>
+                <select name="category_id" required
+                    style="width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #3F3F46; background: #27272A; color: white;">
+                    <option value="">{{ __('Select category') }}</option>
+                    @foreach ($categories as $category)
+                        <option value="{{ $category->id }}"
+                            {{ $question->category_id == $category->id ? 'selected' : '' }}>
+                            {{ $category->name }}
+                        </option>
+                        @if ($category->recursiveChildren)
+                            @foreach ($category->recursiveChildren as $child)
+                                <option value="{{ $child->id }}"
+                                    {{ $question->category_id == $child->id ? 'selected' : '' }}>
+                                    -- {{ $child->name }}
+                                </option>
+                            @endforeach
+                        @endif
+                    @endforeach
+                </select>
+                <small style="color: #71717A; font-size: 12px; display: block; margin-top: 4px;">
+                    Pick the category for this question
+                </small>
             </div>
 
             <div style="display: flex; gap: 10px; justify-content: flex-end;">
