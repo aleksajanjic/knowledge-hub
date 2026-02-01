@@ -35,4 +35,57 @@ return [
         ],
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | AI Integration Configuration
+    |--------------------------------------------------------------------------
+    |
+    | This file contains all configuration for AI provider integration.
+    | Supports multiple providers: OpenAI, Anthropic (Claude), Google (Gemini)
+    |
+    */
+
+    // Global AI settings
+    'ai' => [
+        'enabled' => env('AI_ENABLED', false),
+        'auto_answer' => env('AI_AUTO_ANSWER', false),
+        'primary_provider' => env('AI_PRIMARY_PROVIDER', 'openai'),
+
+        // Fallback order when primary provider fails
+        'fallback_order' => [
+            'anthropic',
+            'gemini',
+            'openai',
+        ],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | OpenAI Configuration
+    |--------------------------------------------------------------------------
+    */
+    'openai' => [
+        'api_key' => env('OPENAI_API_KEY'),
+        'model' => env('OPENAI_MODEL', 'gpt-4o-mini'),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Anthropic (Claude) Configuration
+    |--------------------------------------------------------------------------
+    */
+    'anthropic' => [
+        'api_key' => env('ANTHROPIC_API_KEY'),
+        'model' => env('ANTHROPIC_MODEL', 'claude-sonnet-4-20250514'),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Google Gemini Configuration
+    |--------------------------------------------------------------------------
+    */
+    'gemini' => [
+        'api_key' => env('GEMINI_API_KEY'),
+        'model' => env('GEMINI_MODEL', 'gemini-1.5-flash'),
+    ],
 ];

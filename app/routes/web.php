@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\TagController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\AIController;
 use Illuminate\Support\Facades\Route;
 
 // Home/Dashboard route
@@ -57,5 +58,18 @@ Route::middleware(['auth', 'admin'])
         Route::resource('categories', CategoryController::class)->except(['show']);
         Route::resource('tags', TagController::class)->except(['show']);
     });
+
+Route::middleware(['auth'])->prefix('ai')->name('ai.')->group(function () {
+
+    // AI Dashboard
+    Route::get('/dashboard', [AIController::class, 'dashboard'])->name('dashboard');
+
+    // AI Audit Logs
+    Route::get('/audit-logs', [AIController::class, 'auditLogs'])->name('audit-logs');
+
+    // Manually trigger AI answer generation
+    Route::post('/questions/{question}/generate-answer', [AIController::class, 'generateAnswer'])
+        ->name('generate-answer');
+});
 
 require __DIR__ . '/auth.php';
