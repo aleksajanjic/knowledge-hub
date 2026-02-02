@@ -72,11 +72,11 @@ php artisan serve
 | `APP_ENV` | `local` / `production` |
 | `APP_DEBUG` | `true` / `false` |
 | `APP_URL` | URL aplikacije (npr. `http://localhost:8080`) |
-| `DB_CONNECTION` | `mysql` ili `sqlite` |
-| `DB_HOST` | Host baze (npr. `db` u Docker-u) |
+| `DB_CONNECTION` | `mysql` (Docker) ili `sqlite` |
+| `DB_HOST` | `db` u Docker-u, `127.0.0.1` lokalno bez Docker-a |
 | `DB_DATABASE` | Ime baze (`knowledge_hub`) |
-| `DB_USERNAME` | Korisnik baze |
-| `DB_PASSWORD` | Lozinka baze |
+| `DB_USERNAME` | Korisnik baze (`user` u Docker-u) |
+| `DB_PASSWORD` | Lozinka baze (`password` u Docker-u) |
 
 ### AI varijable (opciono)
 
