@@ -28,7 +28,7 @@
             </label>
         </div>
 
-        <p class="mt-2 text-xs text-zinc-500">
+        <p id="image-error" class="mt-2 text-xs text-zinc-500">
             Max size: 2MB. Supported formats: jpg, png, gif.
         </p>
 
@@ -46,12 +46,20 @@
         const input = document.getElementById('profile_image');
         const preview = document.getElementById('profile-image-preview');
         const placeholder = document.getElementById('profile-image-placeholder');
+        const imageError = document.getElementById('image-error');
 
         if (!input || !preview || !placeholder) return;
 
         input.addEventListener('change', function() {
             const file = this.files[0];
             if (!file) return;
+
+            const fileSize = this.files[0].size / 1024 / 1024;
+
+            if(fileSize > 2){
+                imageError.style.color = "red";
+                return;
+            }
 
             const reader = new FileReader();
             reader.onload = function(e) {

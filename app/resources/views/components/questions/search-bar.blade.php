@@ -25,16 +25,5 @@
                 </a>
             @endif
         </div>
-
-        <!-- Filter Tags (Optional) -->
-        @if (request('tag'))
-            <div style="margin-top: 12px; display: flex; align-items: center; gap: 8px;">
-                <span style="color: #A1A1AA; font-size: 14px;">Filtering by tag:</span>
-                <span
-                    style="padding: 4px 10px; background: #10B981; color: #18181B; font-size: 12px; border-radius: 6px; font-weight: 500;">
-                    {{ request('tag') }}
-                </span>
-            </div>
-        @endif
     </form>
 </div>

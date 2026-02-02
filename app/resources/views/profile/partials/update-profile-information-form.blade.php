@@ -20,7 +20,7 @@
         <div>
             <x-forms.input-label for="name" :value="__('Name')" />
             <x-forms.text-input id="name" name="name" type="text" class="mt-1 block w-full" :value="old('name', $user->name)"
-                required autofocus autocomplete="name" />
+                required autocomplete="name" />
             <x-forms.input-error class="mt-2" :messages="$errors->get('name')" />
         </div>
 
