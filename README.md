@@ -10,6 +10,8 @@
 - Reputacija korisnika
 - Tagovi i kategorije za organizaciju sadržaja
 - Prihvatanje najboljeg odgovora
+- **Bookmarks** – čuvanje omiljenih pitanja i filter "My Bookmarks"
+- **Activity log** – beleženje događaja (kreiranje/izmena/brisanje pitanja i odgovora)
 - **AI integracija** – automatsko generisanje odgovora (OpenAI, Gemini, Anthropic, OpenRouter)
 - Admin panel za upravljanje korisnicima, tagovima i kategorijama
 - Audit log za AI zahteve (tokeni, provajderi, status)
@@ -174,6 +176,17 @@ Generisanje AI odgovora (zahteva autentifikaciju).
 
 HTML sadržaj pitanja za modal (AJAX).
 
+### POST `/questions/{question}/bookmark`
+
+Dodavanje/uklanjanje bookmark-a na pitanje (toggle).
+
+**Odgovor:**
+```json
+{
+  "bookmarked": true
+}
+```
+
 ---
 
 ## 7. Arhitekturalne odluke
@@ -188,6 +201,8 @@ HTML sadržaj pitanja za modal (AJAX).
 | **QuestionObserver** | Automatsko generisanje AI odgovora pri kreiranju pitanja (ako je `AI_AUTO_ANSWER=true`) |
 | **ReputationService** | Izračunavanje reputacije na osnovu glasova i prihvaćenih odgovora |
 | **Spatie Permission** | Uloge (admin, moderator, member) za kontrolu pristupa |
+| **Activity log** | Tabela `activity_log` za pitanja, odgovore i prihvatanje odgovora |
+| **QuestionBookmark** | Tabela `question_bookmarks` za čuvanje omiljenih pitanja |
 
 ---
 
