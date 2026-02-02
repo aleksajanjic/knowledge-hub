@@ -1,36 +1,36 @@
 # Knowledge Hub
 
-## 1. Opis projekta
+## 1. Project Description
 
-**Knowledge Hub** je Q&A platforma slična Stack Overflow-u, izgrađena u Laravelu. Korisnici mogu postavljati pitanja, davati odgovore, glasati i koristiti AI za automatsko generisanje odgovora.
+**Knowledge Hub** is a Q&A platform similar to Stack Overflow, built with Laravel. Users can ask questions, provide answers, vote, and use AI for automatic answer generation.
 
-**Glavne funkcionalnosti:**
-- Pitanja i odgovori sa Markdown podrškom
-- Sistem glasanja (upvote/downvote) za pitanja i odgovore
-- Reputacija korisnika
-- Tagovi i kategorije za organizaciju sadržaja
-- Prihvatanje najboljeg odgovora
-- **Bookmarks** – čuvanje omiljenih pitanja i filter "My Bookmarks"
-- **Activity log** – beleženje događaja (kreiranje/izmena/brisanje pitanja i odgovora)
-- **AI integracija** – automatsko generisanje odgovora (OpenAI, Gemini, Anthropic, OpenRouter)
-- Admin panel za upravljanje korisnicima, tagovima i kategorijama
-- Audit log za AI zahteve (tokeni, provajderi, status)
+**Main features:**
+- Questions and answers with Markdown support
+- Voting system (upvote/downvote) for questions and answers
+- User reputation
+- Tags and categories for content organization
+- Accept best answer
+- **Bookmarks** – save favorite questions and filter by "My Bookmarks"
+- **Activity log** – tracking events (create/update/delete questions and answers)
+- **AI integration** – automatic answer generation (OpenAI, Gemini, Anthropic, OpenRouter)
+- Admin panel for managing users, tags, and categories
+- Audit log for AI requests (tokens, providers, status)
 
 ---
 
-## 2. Zahtevi
+## 2. Requirements
 
-- **PHP** 8.2 ili noviji
+- **PHP** 8.2 or newer
 - **Composer** 2.x
-- **Node.js** 18+ i npm
-- **MySQL** 8.0 (ili SQLite za lokalni razvoj)
-- **PHP ekstenzije:** BCMath, Ctype, cURL, DOM, Fileinfo, JSON, Mbstring, OpenSSL, PCRE, PDO, Tokenizer, XML
+- **Node.js** 18+ and npm
+- **MySQL** 8.0 (or SQLite for local development)
+- **PHP extensions:** BCMath, Ctype, cURL, DOM, Fileinfo, JSON, Mbstring, OpenSSL, PCRE, PDO, Tokenizer, XML
 
 ---
 
-## 3. Koraci instalacije
+## 3. Installation Steps
 
-### Sa Docker-om
+### With Docker
 
 ```bash
 cd knowledge-hub
@@ -43,10 +43,20 @@ docker compose exec app php artisan db:seed
 cd app && npm install && npm run build
 ```
 
-Aplikacija: **http://localhost:8080**  
+Application: **http://localhost:8080**  
 phpMyAdmin: **http://localhost:8081**
 
-### Bez Docker-a (lokalno)
+> **Note:** If you get the error "Please provide a valid cache path", run:
+> `docker compose exec app mkdir -p storage/framework/{cache/data,sessions,views} storage/logs bootstrap/cache && docker compose exec app chmod -R 775 storage bootstrap/cache`
+> or rebuild the image: `docker compose up -d --build`
+
+Users seeded:
+
+1. username: admin@mail.com, password: admin
+2. username: moderator@mail.com, password: moderator
+3. username: member@mail.com, password: member
+
+### Without Docker (local)
 
 ```bash
 cd knowledge-hub/app
@@ -62,70 +72,70 @@ php artisan serve
 
 ---
 
-## 4. Podešavanje okruženja
+## 4. Environment Configuration
 
-### Osnovne varijable (.env)
+### Basic Variables (.env)
 
-| Varijabla | Opis |
-|-----------|------|
-| `APP_NAME` | Ime aplikacije |
+| Variable | Description |
+|----------|-------------|
+| `APP_NAME` | Application name |
 | `APP_ENV` | `local` / `production` |
 | `APP_DEBUG` | `true` / `false` |
-| `APP_URL` | URL aplikacije (npr. `http://localhost:8080`) |
-| `DB_CONNECTION` | `mysql` (Docker) ili `sqlite` |
-| `DB_HOST` | `db` u Docker-u, `127.0.0.1` lokalno bez Docker-a |
-| `DB_DATABASE` | Ime baze (`knowledge_hub`) |
-| `DB_USERNAME` | Korisnik baze (`user` u Docker-u) |
-| `DB_PASSWORD` | Lozinka baze (`password` u Docker-u) |
+| `APP_URL` | Application URL (e.g. `http://localhost:8080`) |
+| `DB_CONNECTION` | `mysql` (Docker) or `sqlite` |
+| `DB_HOST` | `db` in Docker, `127.0.0.1` locally without Docker |
+| `DB_DATABASE` | Database name (`knowledge_hub`) |
+| `DB_USERNAME` | Database user (`user` in Docker) |
+| `DB_PASSWORD` | Database password (`password` in Docker) |
 
-### AI varijable (opciono)
+### AI Variables (optional)
 
-| Varijabla | Opis |
-|-----------|------|
-| `AI_ENABLED` | `true` za uključivanje AI funkcionalnosti |
-| `AI_AUTO_ANSWER` | `true` za automatsko odgovaranje na nova pitanja |
-| `AI_PRIMARY_PROVIDER` | `openai`, `gemini`, `anthropic` ili `openrouter` |
-| `OPENAI_API_KEY` | API ključ za OpenAI |
-| `OPENAI_MODEL` | Model (npr. `gpt-4o-mini`) |
-| `GEMINI_API_KEY` | API ključ za Google Gemini |
-| `GEMINI_MODEL` | Model (npr. `gemini-2.0-flash`) |
-| `ANTHROPIC_API_KEY` | API ključ za Anthropic Claude |
-| `OPENROUTER_API_KEY` | API ključ za OpenRouter (jedinstveni pristup više provajdera) |
-| `OPENROUTER_MODEL` | Model (npr. `openai/gpt-4o-mini`) |
+| Variable | Description |
+|----------|-------------|
+| `AI_ENABLED` | `true` to enable AI features |
+| `AI_AUTO_ANSWER` | `true` for automatic answers to new questions |
+| `AI_PRIMARY_PROVIDER` | `openai`, `gemini`, `anthropic` or `openrouter` |
+| `OPENAI_API_KEY` | API key for OpenAI |
+| `OPENAI_MODEL` | Model (e.g. `gpt-4o-mini`) |
+| `GEMINI_API_KEY` | API key for Google Gemini |
+| `GEMINI_MODEL` | Model (e.g. `gemini-2.0-flash`) |
+| `ANTHROPIC_API_KEY` | API key for Anthropic Claude |
+| `OPENROUTER_API_KEY` | API key for OpenRouter (unified access to multiple providers) |
+| `OPENROUTER_MODEL` | Model (e.g. `openai/gpt-4o-mini`) |
 
 ---
 
-## 5. Podešavanje baze
+## 5. Database Setup
 
 ```bash
-# Migracije
+# Migrations
 php artisan migrate
 
-# Seedovanje (korisnici, pitanja, kategorije)
+# Seeding (users, questions, categories)
 php artisan db:seed
 
-# Sve odjednom
+# All at once
 php artisan migrate:fresh --seed
 ```
 
 ---
 
-## 6. API dokumentacija
+## 6. API Documentation
 
-Aplikacija koristi JSON odgovore za AJAX zahteve. Glavni endpoint-i:
+The application uses JSON responses for AJAX requests. Main endpoints:
 
 ### POST `/questions/{question}/answers`
 
-Dodavanje odgovora na pitanje.
+Add an answer to a question.
 
-**Zahtev:**
+**Request:**
 ```json
 {
-  "content": "Vaš odgovor ovde (min. 10 karaktera)"
+  "content": "Your answer here (min. 10 characters)"
 }
 ```
 
-**Odgovor (uspeh):**
+**Response (success):**
 ```json
 {
   "success": true,
@@ -135,9 +145,9 @@ Dodavanje odgovora na pitanje.
 
 ### POST `/questions/{question}/upvote` / `/questions/{question}/downvote`
 
-Glasanje za pitanje.
+Vote on a question.
 
-**Odgovor:**
+**Response:**
 ```json
 {
   "votes": 5,
@@ -148,9 +158,9 @@ Glasanje za pitanje.
 
 ### POST `/answers/{answer}/upvote` / `/answers/{answer}/downvote`
 
-Glasanje za odgovor.
+Vote on an answer.
 
-**Odgovor:**
+**Response:**
 ```json
 {
   "votes": 3,
@@ -161,9 +171,9 @@ Glasanje za odgovor.
 
 ### POST `/ai/questions/{question}/generate-answer`
 
-Generisanje AI odgovora (zahteva autentifikaciju).
+Generate AI answer (requires authentication).
 
-**Odgovor (uspeh):**
+**Response (success):**
 ```json
 {
   "success": true,
@@ -174,13 +184,13 @@ Generisanje AI odgovora (zahteva autentifikaciju).
 
 ### GET `/questions/{question}/details`
 
-HTML sadržaj pitanja za modal (AJAX).
+HTML content for question modal (AJAX).
 
 ### POST `/questions/{question}/bookmark`
 
-Dodavanje/uklanjanje bookmark-a na pitanje (toggle).
+Add/remove bookmark on a question (toggle).
 
-**Odgovor:**
+**Response:**
 ```json
 {
   "bookmarked": true
@@ -189,75 +199,75 @@ Dodavanje/uklanjanje bookmark-a na pitanje (toggle).
 
 ---
 
-## 7. Arhitekturalne odluke
+## 7. Architectural Decisions
 
-| Odluka | Objašnjenje |
-|--------|--------------|
-| **Laravel Breeze** | Jednostavna autentifikacija bez potrebe za kompleksnim paketima |
-| **Polimorfni glasovi** | Jedna `votes` tabela za glasove na pitanjima i odgovorima (`votable_type`, `votable_id`) |
-| **Morph map** | Kratke `votable_type` vrednosti (`Question`, `Answer`) umesto punih imena klasa |
-| **AIManager + provajderi** | Apstraktni sloj (`AIServiceInterface`) za više AI provajdera sa fallback-om |
-| **AutoAnswerService** | Centralizovana logika za generisanje AI odgovora i audit log |
-| **QuestionObserver** | Automatsko generisanje AI odgovora pri kreiranju pitanja (ako je `AI_AUTO_ANSWER=true`) |
-| **ReputationService** | Izračunavanje reputacije na osnovu glasova i prihvaćenih odgovora |
-| **Spatie Permission** | Uloge (admin, moderator, member) za kontrolu pristupa |
-| **Activity log** | Tabela `activity_log` za pitanja, odgovore i prihvatanje odgovora |
-| **QuestionBookmark** | Tabela `question_bookmarks` za čuvanje omiljenih pitanja |
+| Decision | Explanation |
+|----------|-------------|
+| **Laravel Breeze** | Simple authentication without complex packages |
+| **Polymorphic votes** | Single `votes` table for votes on questions and answers (`votable_type`, `votable_id`) |
+| **Morph map** | Short `votable_type` values (`Question`, `Answer`) instead of full class names |
+| **AIManager + providers** | Abstract layer (`AIServiceInterface`) for multiple AI providers with fallback |
+| **AutoAnswerService** | Centralized logic for AI answer generation and audit log |
+| **QuestionObserver** | Automatic AI answer generation when creating questions (if `AI_AUTO_ANSWER=true`) |
+| **ReputationService** | Reputation calculation based on votes and accepted answers |
+| **Spatie Permission** | Roles (admin, moderator, member) for access control |
+| **Activity log** | `activity_log` table for questions, answers, and answer acceptance |
+| **QuestionBookmark** | `question_bookmarks` table for saving favorite questions |
 
 ---
 
-## 8. AI integracija
+## 8. AI Integration
 
-### Podržani provajderi
+### Supported Providers
 
 - **OpenAI** (GPT)
 - **Google Gemini**
 - **Anthropic** (Claude)
-- **OpenRouter** (unified API za 100+ modela)
+- **OpenRouter** (unified API for 100+ models)
 
-### Konfiguracija
+### Configuration
 
-1. Postavite `AI_ENABLED=true` u `.env`
-2. Dodajte API ključ za bar jedan provajder
-3. Izaberite primarnog provajdera: `AI_PRIMARY_PROVIDER=openai` (ili `gemini`, `anthropic`, `openrouter`)
-4. Opciono: `AI_AUTO_ANSWER=true` za automatsko odgovaranje na nova pitanja
+1. Set `AI_ENABLED=true` in `.env`
+2. Add an API key for at least one provider
+3. Choose primary provider: `AI_PRIMARY_PROVIDER=openai` (or `gemini`, `anthropic`, `openrouter`)
+4. Optional: `AI_AUTO_ANSWER=true` for automatic answers to new questions
 
-### Testiranje
+### Testing
 
 ```bash
 php artisan ai:test
-# ili sa pitanjem:
-php artisan ai:test "Šta je Laravel?"
+# or with a question:
+php artisan ai:test "What is Laravel?"
 ```
 
 ### Fallback
 
-Ako primarni provajder ne uspe (kvota, greška), AIManager automatski koristi sledeće u nizu: `openai` → `anthropic` → `gemini` → `openrouter`.
+If the primary provider fails (quota, error), AIManager automatically uses the next in line: `openai` → `anthropic` → `gemini` → `openrouter`.
 
 ### Audit
 
-Svi AI zahtevi se beleže u `ai_request_audits` (provajder, model, prompt, odgovor, tokeni, status). Pristup: `/ai/dashboard` i `/ai/audit-logs`.
+All AI requests are logged in `ai_request_audits` (provider, model, prompt, response, tokens, status). Access: `/ai/dashboard` and `/ai/audit-logs`.
 
 ---
 
-## 9. Poznata ograničenja
+## 9. Known Limitations
 
-- **Kvota AI provajdera** – besplatni planovi imaju ograničenja; za produkciju je potrebno plaćanje
-- **Generisanje dokumentacije** – nije implementirano (AI generiše samo odgovore na pitanja)
-- **Streaming odgovora** – AI odgovori se vraćaju odjednom, bez streaming-a
-- **Rate limiting** – nema eksplicitnog rate limiting-a za AI endpoint-e
-- **Caching** – odgovori za ista pitanja se ne keširaju
-- **Internacionalizacija** – većina teksta je na engleskom; moguće proširenje sa `lang/` fajlovima
+- **AI provider quota** – free plans have limits; paid plans required for production
+- **Documentation generation** – not implemented (AI only generates answers to questions)
+- **Response streaming** – AI responses are returned at once, no streaming
+- **Rate limiting** – no explicit rate limiting for AI endpoints
+- **Caching** – responses for the same questions are not cached
+- **Internationalization** – most text is in English; extensible via `lang/` files
 
 ---
 
-## Dodatne komande
+## Additional Commands
 
 ```bash
-# Brisanje keša
+# Clear cache
 php artisan config:clear
 php artisan cache:clear
 
-# Kreiranje admin korisnika (ručno ili preko seedera)
+# Create admin user (manually or via seeder)
 php artisan tinker
 ```
