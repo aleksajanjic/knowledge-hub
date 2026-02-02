@@ -14,15 +14,26 @@
 
     $reputationColor = ($question->user->reputation ?? 0) > 0 ? '#10B981' : '#F43F5E';
     $numOfAns = $question->answers_count;
+    $isBookmarked = auth()->check() && $question->isBookmarkedBy(auth()->id());
 @endphp
 
 
 <div onclick="openQuestionModal({{ $question->id }})"
     style="background: {{ $bgColor }}; border:1px solid {{ $borderColor }}; border-radius:12px; padding:20px; margin-bottom:16px; cursor:pointer; transition:.2s; position:relative;">
 
-    <!-- Three-dot menu -->
+    <!-- Bookmark & Three-dot menu -->
+    <div style="position:absolute; top:12px; right:12px; display:flex; align-items:center; gap:4px;" onclick="event.stopPropagation()">
+        @auth
+            <button type="button" onclick="toggleBookmark({{ $question->id }}, this)"
+                title="{{ $isBookmarked ? __('Remove bookmark') : __('Bookmark') }}"
+                style="padding:6px; background:none; border:none; cursor:pointer; color:{{ $isBookmarked ? '#F59E0B' : '#71717A' }};">
+                <svg id="bookmark-icon-{{ $question->id }}" style="width:20px;height:20px;" fill="{{ $isBookmarked ? 'currentColor' : 'none' }}" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                </svg>
+            </button>
+        @endauth
     @canany(['update', 'delete'], $question)
-        <div style="position:absolute; top:12px; right:12px;" onclick="event.stopPropagation()">
+        <div onclick="event.stopPropagation()">
             <div style="position: relative; display: inline-block;">
                 <button onclick="toggleDropdown({{ $question->id }})"
                     class="p-2 rounded text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800 transition-colors"
@@ -66,6 +77,7 @@
             </div>
         </div>
     @endcanany
+    </div>
 
     <div style="display:flex; gap:16px;">
         <!-- Vote Section -->

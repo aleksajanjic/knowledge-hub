@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Activity;
 use App\Models\Category;
 use App\Models\Question;
 use App\Models\Tag;
@@ -9,6 +10,7 @@ use App\Services\QuestionFilter;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\Schema;
 
 class QuestionController extends Controller
 {
@@ -24,7 +26,11 @@ class QuestionController extends Controller
 
         $categories = Category::with('recursiveChildren')->roots()->get();
 
-        return view('home', compact('questions', 'allTags', 'categories'));
+        $recentActivity = Schema::hasTable('activity_log')
+            ? Activity::with('user')->orderByDesc('created_at')->take(10)->get()
+            : collect();
+
+        return view('home', compact('questions', 'allTags', 'categories', 'recentActivity'));
     }
 
     public function store(Request $request): RedirectResponse
@@ -46,6 +52,8 @@ class QuestionController extends Controller
         if (!empty($validated['tags'])) {
             $this->attachTags($question, $validated['tags']);
         }
+
+        Activity::log('question_created', $question, $question->title);
 
         return redirect()->route('home')->with('success', 'Question created successfully.');
     }
@@ -92,12 +100,17 @@ class QuestionController extends Controller
             $this->attachTags($question, $validated['tags']);
         }
 
+        Activity::log('question_updated', $question, $question->title);
+
         return redirect()->route('home')->with("success", 'Question updated successfull.');
     }
 
     public function destroy(Question $question): RedirectResponse
     {
+        $title = $question->title;
         $question->delete();
+
+        Activity::log('question_deleted', null, $title);
 
         return redirect()->route('home')->with('success', 'Question deleted successfully.');
     }

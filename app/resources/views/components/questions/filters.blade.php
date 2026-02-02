@@ -21,6 +21,10 @@
             <select name="status" onchange="applyFilter('status', this.value)"
                 style="width: 100%; padding: 8px 12px; background: #18181B; border: 1px solid #3F3F46; border-radius: 8px; color: #FAFAFA; font-size: 14px;">
                 <option value="">{{ __('All Questions') }}</option>
+                @auth
+                    <option value="bookmarked" {{ request('status') == 'bookmarked' ? 'selected' : '' }}>
+                        {{ __('My Bookmarks') }}</option>
+                @endauth
                 <option value="unanswered" {{ request('status') == 'unanswered' ? 'selected' : '' }}>
                     {{ __('Unanswered') }}</option>
                 <option value="answered" {{ request('status') == 'answered' ? 'selected' : '' }}>{{ __('Answered') }}
@@ -63,7 +67,7 @@
         </div>
 
         <!-- Clear Filters -->
-        @if (request()->hasAny(['sort', 'status', 'date', 'tag']))
+        @if (request()->hasAny(['sort', 'status', 'date', 'tag']) || request('status') == 'bookmarked')
             <div style="flex: 0;">
                 <label style="display: block; color: transparent; font-size: 12px; margin-bottom: 6px;">&nbsp;</label>
                 <a href="{{ route('questions.index', ['search' => request('search')]) }}"
@@ -81,7 +85,7 @@
             <div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center;">
                 <span style="color: #A1A1AA; font-size: 13px; font-weight: 500;">{{ __('Active filters:') }}</span>
 
-                @if (request('status'))
+                @if (request('status') && request('status') !== 'bookmarked')
                     <span
                         style="padding: 4px 10px; background: #10B981; color: #18181B; font-size: 12px; font-weight: 600; border-radius: 6px;">
                         {{ __(ucfirst(request('status'))) }}
@@ -99,6 +103,13 @@
                     <span
                         style="padding: 4px 10px; background: #8B5CF6; color: white; font-size: 12px; font-weight: 600; border-radius: 6px;">
                         {{ request('tag') }}
+                    </span>
+                @endif
+
+                @if (request('status') == 'bookmarked')
+                    <span
+                        style="padding: 4px 10px; background: #F59E0B; color: #18181B; font-size: 12px; font-weight: 600; border-radius: 6px;">
+                        {{ __('My Bookmarks') }}
                     </span>
                 @endif
             </div>

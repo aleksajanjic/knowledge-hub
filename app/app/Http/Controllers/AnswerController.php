@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Question;
+use App\Models\Activity;
 use App\Models\Answer;
+use App\Models\Question;
 use App\Services\ReputationService;
 use Illuminate\Http\Request;
 
@@ -26,6 +27,8 @@ class AnswerController extends Controller
             'body' => $validated['content'],
             'user_id' => auth()->id()
         ]);
+
+        Activity::log('answer_created', $answer, $question->title);
 
         return response()->json([
             'success' => true,
@@ -124,6 +127,8 @@ class AnswerController extends Controller
 
         $answer->update(['body' => $validated['body']]);
 
+        Activity::log('answer_updated', $answer, $answer->question->title ?? null);
+
         return redirect()->route('questions.index')
             ->with('success', __('Answer updated.'));
     }
@@ -150,6 +155,8 @@ class AnswerController extends Controller
         $question->answers()->update(['is_accepted' => false]);
         $answer->update(['is_accepted' => true]);
         $this->reputationService->updateReputationAfterAccept($answer, true);
+
+        Activity::log('answer_accepted', $answer, $question->title);
 
         return response()->json([
             'success' => true,

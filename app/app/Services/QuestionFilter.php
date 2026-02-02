@@ -23,9 +23,14 @@ class QuestionFilter
         $this->applySearch()
             ->applyTagFilter()
             ->applyStatusFilter()
+            ->applyBookmarkedFilter()
             ->applyDateFilter()
             ->applySort()
             ->applyCategoryFilter();
+
+        if (auth()->check()) {
+            $this->query->with(['bookmarks' => fn($b) => $b->where('user_id', auth()->id())]);
+        }
 
         return $this->query;
     }
@@ -96,6 +101,17 @@ class QuestionFilter
                 default => null
             };
         }
+
+        return $this;
+    }
+
+    protected function applyBookmarkedFilter(): self
+    {
+        if ($this->request->status !== 'bookmarked' || !auth()->check()) {
+            return $this;
+        }
+
+        $this->query->whereHas('bookmarks', fn($b) => $b->where('user_id', auth()->id()));
 
         return $this;
     }

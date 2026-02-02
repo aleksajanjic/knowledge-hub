@@ -47,7 +47,7 @@
 
             <div class="flex justify-between">
                 <!-- Category Tree -->
-                <div class="mb-6">
+                <div class="mb-6" style="max-width: 20%;">
                     <h3 class="text-lg font-bold text-white mb-2">Categories</h3>
 
                     <x-categories.category-tree :categories="$categories" />
@@ -60,6 +60,8 @@
                             </a>
                         </div>
                     @endif
+
+                    <x-activity.recent-activity :activities="$recentActivity" />
                 </div>
 
                 <!-- Questions List -->

@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\TagController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\AIController;
+use App\Http\Controllers\BookmarkController;
 use App\Http\Controllers\UserProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -31,6 +32,7 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/questions/{question}', [QuestionController::class, 'update'])->name('questions.update');
     Route::delete('/questions/{question}', [QuestionController::class, 'destroy'])->name('questions.destroy');
     Route::get('/questions/{question}/details', [QuestionController::class, 'show'])->name('questions.show');
+    Route::post('/questions/{question}/bookmark', [BookmarkController::class, 'toggle'])->name('questions.bookmark');
 
     // Vote
     Route::post('/questions/{question}/upvote', [VoteController::class, 'upvote'])->name('questions.upvote');

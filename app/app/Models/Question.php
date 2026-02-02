@@ -93,4 +93,20 @@ class Question extends Model
     {
         return $this->belongsTo(Category::class);
     }
+
+    public function bookmarks()
+    {
+        return $this->hasMany(QuestionBookmark::class);
+    }
+
+    public function isBookmarkedBy(?int $userId): bool
+    {
+        if (!$userId) {
+            return false;
+        }
+        if ($this->relationLoaded('bookmarks')) {
+            return $this->bookmarks->isNotEmpty();
+        }
+        return $this->bookmarks()->where('user_id', $userId)->exists();
+    }
 }
