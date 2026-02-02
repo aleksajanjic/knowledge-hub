@@ -36,6 +36,7 @@ class TestAIIntegration extends Command
             $this->line('  - OPENAI_API_KEY');
             $this->line('  - ANTHROPIC_API_KEY');
             $this->line('  - GEMINI_API_KEY');
+            $this->line('  - OPENROUTER_API_KEY');
             return 1;
         }
 

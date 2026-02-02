@@ -126,12 +126,21 @@
                         style="width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #3F3F46; background: #18181B; color: white; font-size: 14px; resize: vertical;"
                         required></textarea>
                     <span id="answer-error" style="color: #F43F5E; font-size: 13px; display: none;"></span>
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px;">
-                        <button type="button" id="submit-answer-btn"
-                            onclick="submitAnswer(event, {{ $question->id }})"
-                            style="padding: 10px 24px; background: #10B981; color: #18181B; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 14px;">
-                            {{ __('Post Answer') }}
-                        </button>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px; gap: 10px; flex-wrap: wrap;">
+                        <div style="display: flex; gap: 10px;">
+                            <button type="button" id="submit-answer-btn"
+                                onclick="submitAnswer(event, {{ $question->id }})"
+                                style="padding: 10px 24px; background: #10B981; color: #18181B; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 14px;">
+                                {{ __('Post Answer') }}
+                            </button>
+                            @if(config('services.ai.enabled', false))
+                                <button type="button" id="generate-ai-answer-btn"
+                                    onclick="generateAIAnswer({{ $question->id }})"
+                                    style="padding: 10px 24px; background: #6366F1; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 14px;">
+                                    {{ __('Generate AI Answer') }}
+                                </button>
+                            @endif
+                        </div>
                     </div>
                 </form>
             </div>

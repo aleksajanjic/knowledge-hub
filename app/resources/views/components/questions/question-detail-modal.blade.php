@@ -2,7 +2,7 @@
     class="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4 hidden"
     onclick="if(event.target === this) { closeQuestionModal(); }">
     <div
-        style="background: #18181B; width: 80%; max-width: 900px; max-height: 90vh; overflow-y: auto; border-radius: 15px; position: relative;">
+        style="background: #18181B; width: 80%; max-height: 90vh; overflow-y: auto; border-radius: 15px; position: relative;">
         <!-- Close X Button -->
         <button type="button" onclick="closeQuestionModal()"
             style="position: absolute; top: 20px; right: 20px; background: none; border: none; color: #71717A; font-size: 24px; cursor: pointer; padding: 5px 10px; z-index: 10;">
@@ -137,6 +137,41 @@
                 submitBtn.disabled = false;
                 submitBtn.textContent = '{{ __('Post Answer') }}';
             });
+    };
+
+    window.generateAIAnswer = function(questionId) {
+        const btn = document.getElementById('generate-ai-answer-btn');
+        if (btn) {
+            btn.disabled = true;
+            btn.textContent = 'Generating...';
+        }
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content || '{{ csrf_token() }}';
+        fetch(`/ai/questions/${questionId}/generate-answer`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken,
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({}),
+            credentials: 'same-origin'
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) openQuestionModal(questionId);
+            else alert(data.message || 'Failed to generate AI answer.');
+        })
+        .catch(err => {
+            console.error(err);
+            alert('Failed to generate AI answer.');
+        })
+        .finally(() => {
+            if (btn) {
+                btn.disabled = false;
+                btn.textContent = '{{ __('Generate AI Answer') }}';
+            }
+        });
     };
 
     window.acceptAnswer = function(questionId, answerId, button) {

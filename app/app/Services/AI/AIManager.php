@@ -3,6 +3,7 @@
 namespace App\Services\AI;
 
 use App\Contracts\AIServiceInterface;
+use App\Services\AI\OpenRouterService;
 use Exception;
 use Illuminate\Support\Facades\Log;
 
@@ -22,7 +23,8 @@ class AIManager
         $this->providers = [
             'openai' => app(OpenAIService::class),
             'anthropic' => app(AnthropicService::class),
-            'gemini' => app(GeminiService::class)
+            'gemini' => app(GeminiService::class),
+            'openrouter' => app(OpenRouterService::class),
         ];
 
         $primaryProviderName = config('services.ai.primary_provider', 'openai');

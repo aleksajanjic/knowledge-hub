@@ -10,6 +10,8 @@ class AIRequestAudit extends Model
 {
     use HasFactory;
 
+    protected $table = 'ai_request_audits';
+
     protected $fillable = [
         'provider',
         'model',
@@ -78,6 +80,6 @@ class AIRequestAudit extends Model
             $query->provider($provider);
         }
 
-        return (float) @query->sum('cost');
+        return (float) $query->sum('cost');
     }
 }

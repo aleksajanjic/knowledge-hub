@@ -48,14 +48,14 @@ return [
     // Global AI settings
     'ai' => [
         'enabled' => env('AI_ENABLED', false),
-        'auto_answer' => env('AI_AUTO_ANSWER', false),
         'primary_provider' => env('AI_PRIMARY_PROVIDER', 'openai'),
 
         // Fallback order when primary provider fails
         'fallback_order' => [
+            'openai',
             'anthropic',
             'gemini',
-            'openai',
+            'openrouter',
         ],
     ],
 
@@ -86,6 +86,18 @@ return [
     */
     'gemini' => [
         'api_key' => env('GEMINI_API_KEY'),
-        'model' => env('GEMINI_MODEL', 'gemini-1.5-flash-preview'),
+        'model' => env('GEMINI_MODEL', 'gemini-2.0-flash'),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | OpenRouter Configuration (unified API for OpenAI, Anthropic, Gemini, etc.)
+    |--------------------------------------------------------------------------
+    | Single API key for 100+ models. Model format: "openai/gpt-4o-mini", "anthropic/claude-3-sonnet"
+    | @see https://openrouter.ai/docs
+    */
+    'openrouter' => [
+        'api_key' => env('OPENROUTER_API_KEY'),
+        'model' => env('OPENROUTER_MODEL', 'openai/gpt-4o-mini'),
     ],
 ];

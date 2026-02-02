@@ -21,8 +21,8 @@ class QuestionObserver
         if (!$this->autoAnswerService->isEnabled()) {
             return;
         }
-            $this->autoAnswerService->generateAnswerForQuestion($question);
         try {
+            $this->autoAnswerService->generateAnswerForQuestion($question);
         } catch (Exception $e) {
             Log::error("Failed to generate AI answer for question {$question->id}: {$e->getMessage()}");
         }

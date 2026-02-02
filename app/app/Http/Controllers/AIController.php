@@ -45,22 +45,31 @@ class AIController extends Controller
 
     public function generateAnswer(Question $question)
     {
-        $this->authorize('update', $question);
-
         try {
+            $answer = $this->autoAnswerService->generateAnswerForQuestion($question, auth()->id());
+
             if ($answer) {
+                if (request()->wantsJson() || request()->ajax()) {
+                    return response()->json([
+                        'success' => true,
+                        'message' => __('AI answer generated successfully!'),
+                        'answer_id' => $answer->id,
+                    ]);
+                }
                 return redirect()
                     ->route('questions.show', $question)
-                    ->with('success', 'AI answer generated successfully!');
+                    ->with('success', __('AI answer generated successfully!'));
             }
 
-            return redirect()
-                ->back()
-                ->with('error', 'Failed to generate AI answer. Check audit logs for details.');
+            if (request()->wantsJson() || request()->ajax()) {
+                return response()->json(['success' => false, 'message' => __('Failed to generate AI answer.')], 422);
+            }
+            return redirect()->back()->with('error', __('Failed to generate AI answer. Check audit logs for details.'));
         } catch (Exception $e) {
-            return redirect()
-                ->back()
-                ->with('error', 'Error: ' . $e->getMessage());
+            if (request()->wantsJson() || request()->ajax()) {
+                return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+            }
+            return redirect()->back()->with('error', 'Error: ' . $e->getMessage());
         }
     }
 

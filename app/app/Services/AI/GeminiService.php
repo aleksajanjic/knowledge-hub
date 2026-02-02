@@ -13,10 +13,15 @@ class GeminiService implements AIServiceInterface
     private string $model;
     private string $baseUrl;
 
+    private const DEPRECATED_MODELS = ['gemini-1.5-flash', 'gemini-1.5-flash-preview'];
+
     public function __construct()
     {
         $this->apiKey = config('services.gemini.api_key', '');
-        $this->model = config('services.gemini.model', 'gemini-1.5-flash-preview');
+        $configuredModel = config('services.gemini.model', 'gemini-2.0-flash');
+        $this->model = in_array($configuredModel, self::DEPRECATED_MODELS)
+            ? 'gemini-2.0-flash'
+            : $configuredModel;
         $this->baseUrl = 'https://generativelanguage.googleapis.com/v1beta';
     }
 

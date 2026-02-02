@@ -18,10 +18,10 @@ class AutoAnswerService
         $this->aiManager = $aiManager;
     }
 
-    public function generateAnswerForQuestion(Question $question): ?Answer
+    public function generateAnswerForQuestion(Question $question, ?int $userId = null): ?Answer
     {
         if (!config('services.ai.enabled', false)) {
-            Log::info("AI auto answer is dissabled in config.");
+            Log::info("AI auto answer is disabled in config.");
             return null;
         }
 
@@ -31,30 +31,33 @@ class AutoAnswerService
             return null;
         }
 
+        $userId = $userId ?? $question->user_id;
+
         $startTime = microtime(true);
         $context = $this->buildContext($question);
 
         try {
-            $result = $this->aiManager->generateAnswer($question->title . "\n\n" . $question->body, $context);
+            $questionText = $question->title . "\n\n" . ($question->content ?? $question->title);
+            $result = $this->aiManager->generateAnswer($questionText, $context);
 
-            $responseTime = (int) ((microtime(true) - $startTime) + 1000);
+            $responseTime = (int) ((microtime(true) - $startTime) * 1000);
             $provider = $this->aiManager->getPrimaryProvider();
 
-            $answer = Answer::create([
-                'question_id' => $question->id,
-                'user_id' => null,
+            $answer = $question->answers()->create([
                 'body' => $result['answer'],
-                'is_ai_generated' => true
+                'user_id' => $userId,
+                'votes' => 0,
             ]);
 
             $this->logSuccessfulRequest(
                 $question,
                 $provider->getProviderName(),
                 $result['model'],
-                $question->title . "\n\n" . $question->body,
+                $questionText,
                 $result['answer'],
                 $result['tokens_used'],
-                $responseTime
+                $responseTime,
+                $userId
             );
 
             return $answer;
@@ -66,7 +69,8 @@ class AutoAnswerService
             $this->logFailedRequest(
                 $question,
                 $e->getMessage(),
-                $responseTime
+                $responseTime,
+                $userId
             );
 
             return null;
@@ -96,7 +100,8 @@ class AutoAnswerService
         string $prompt,
         string $response,
         int $tokensUsed,
-        int $responseTime
+        int $responseTime,
+        ?int $userId = null
     ): void {
         AIRequestAudit::create([
             'provider' => strtolower($provider),
@@ -106,7 +111,7 @@ class AutoAnswerService
             'tokens_used' => $tokensUsed,
             'status' => 'success',
             'question_id' => $question->id,
-            'user_id' => $question->user_id,
+            'user_id' => $userId ?? $question->user_id,
             'response_time_ms' => $responseTime,
         ]);
     }
@@ -114,22 +119,23 @@ class AutoAnswerService
     private function logFailedRequest(
         Question $question,
         string $errorMessage,
-        ?int $responseTime = null
+        ?int $responseTime = null,
+        ?int $userId = null
     ): void {
         AIRequestAudit::create([
             'provider' => 'unknown',
             'model' => 'unknown',
-            'prompt' => $question->title . "\n\n" . $question->body,
+            'prompt' => $question->title . "\n\n" . ($question->content ?? $question->title),
             'status' => 'failed',
             'error_message' => $errorMessage,
             'question_id' => $question->id,
-            'user_id' => $question->user_id,
+            'user_id' => $userId ?? $question->user_id,
             'response_time_ms' => $responseTime,
         ]);
     }
 
     public function isEnabled(): bool
     {
-        return config('services.ai.enabled', false) && config('services.ai.auto_answer', false);
+        return config('services.ai.enabled', false);
     }
 }
